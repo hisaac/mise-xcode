@@ -1,41 +1,4 @@
-# mise tool plugin template
-
-This is a GitHub template for building a mise tool plugin using the vfox-style Lua hooks architecture.
-
-## Using this template
-
-### Option 1: Use GitHub's template feature (recommended)
-
-1. Click "Use this template" button on GitHub
-2. Name your repository (e.g., `mise-mytool`)
-3. Clone your new repository
-4. Follow the setup instructions below
-
-### Option 2: Clone and modify
-
-```bash
-git clone https://github.com/jdx/mise-tool-plugin-template mise-mytool
-cd mise-mytool
-rm -rf .git
-git init
-```
-
-## Setup Instructions
-
-### 1. Replace placeholders
-
-Search and replace these placeholders throughout the project:
-
-- `<TOOL>` → your tool name (e.g., `semver`)
-- `<GITHUB_USER>` → your GitHub username or organization
-- `<GITHUB_REPO>` → the upstream tool's GitHub repository name
-
-Files to update:
-
-- `metadata.lua` - Update name, description, author, updateUrl
-- `hooks/*.lua` - Replace placeholders in all hook files
-- `mise-tasks/test` - Update test version and command
-- `README.md` - Update this file with your tool's information
+# mise-xcode
 
 ### 2. Implement the hooks
 
@@ -133,7 +96,7 @@ This sets up automatic linting and formatting on git commits.
 1. Link your plugin for development:
 
 ```bash
-mise plugin link --force <TOOL> .
+mise plugin link --force xcode .
 ```
 
 2. Run tests:
@@ -175,7 +138,7 @@ hk fix        # Run linters and auto-fix issues
 Enable debug output:
 
 ```bash
-MISE_DEBUG=1 mise install <TOOL>@latest
+MISE_DEBUG=1 mise install xcode@latest
 ```
 
 ## Files

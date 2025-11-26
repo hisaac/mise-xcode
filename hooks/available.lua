@@ -1,51 +1,53 @@
 -- hooks/available.lua
+
 -- Returns a list of available versions for the tool
 -- Documentation: https://mise.jdx.dev/tool-plugin-development.html#available-hook
-
+-- @return table Descriptions of available versions and accompanying tool descriptions
 function PLUGIN:Available(ctx)
-    local http = require("http")
-    local json = require("json")
+	local http = require("http")
+	local json = require("json")
 
-    -- Example 1: GitHub Tags API (most common)
-    -- Replace <GITHUB_USER>/<GITHUB_REPO> with your tool's repository
-    local repo_url = "https://api.github.com/repos/<GITHUB_USER>/<GITHUB_REPO>/tags"
+	local xcodereleases_api_url = "https://xcodereleases.com/data.json"
 
-    -- Example 2: GitHub Releases API (for tools that use GitHub releases)
-    -- local repo_url = "https://api.github.com/repos/<GITHUB_USER>/<GITHUB_REPO>/releases"
+	local response, error = http.get({
+		url = xcodereleases_api_url
+	})
 
-    -- mise automatically handles GitHub authentication - no manual token setup needed
-    local resp, err = http.get({
-        url = repo_url,
-    })
+	if error ~= nil then
+		error("Failed to fetch versions: " .. error)
+	end
 
-    if err ~= nil then
-        error("Failed to fetch versions: " .. err)
-    end
-    if resp.status_code ~= 200 then
-        error("GitHub API returned status " .. resp.status_code .. ": " .. resp.body)
-    end
+	local data = json.decode(response.body)
+	local result = {}
 
-    local tags = json.decode(resp.body)
-    local result = {}
+	for _, item in ipairs(data) do
+		if item.version.release and item.version.release.release == true then
+			local version = item.version.number
+			local build = item.version.build
 
-    -- Process tags/releases
-    for _, tag_info in ipairs(tags) do
-        local version = tag_info.name
+			local note = nil
 
-        -- Clean up version string (remove 'v' prefix if present)
-        -- version = version:gsub("^v", "")
+			local swift = nil
+			if item.compilers and item.compilers.swift then
+				swift = item.compilers.swift.number
+			end
 
-        -- For releases API, you might want:
-        -- local version = tag_info.tag_name:gsub("^v", "")
-        -- local is_prerelease = tag_info.prerelease or false
-        -- local note = is_prerelease and "pre-release" or nil
+			table.insert(result, {
+				version = version,
+				note = note,
+				addition = {
+					{
+						name = "build",
+						version = build
+					},
+					{
+						name = "swift",
+						version = swift
+					}
+				}
+			})
+		end
+	end
 
-        table.insert(result, {
-            version = version,
-            note = nil, -- Optional: "latest", "lts", "pre-release", etc.
-            -- addition = {} -- Optional: additional tools/components
-        })
-    end
-
-    return result
+	return result
 end
