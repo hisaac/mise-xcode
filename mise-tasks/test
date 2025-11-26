@@ -11,8 +11,8 @@ output=$(mise exec "<TOOL>@1.0.0" -- "<TOOL>" --version)
 echo "<TOOL> output: $output"
 
 if echo "$output" | grep -q '<TOOL>@1.0.0'; then
-    echo "✓ Tests passed"
+	echo "✓ Tests passed"
 else
-    echo "✗ Test failed: expected version <TOOL>@1.0.0"
-    exit 1
+	echo "✗ Test failed: expected version <TOOL>@1.0.0"
+	exit 1
 fi

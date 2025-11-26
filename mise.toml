@@ -7,6 +7,13 @@ hk = "latest"
 lua = "5.4"
 pkl = "latest"
 stylua = "latest"
+xcodes = "latest"
+
+[hooks]
+postinstall = ["mise run dependencies"]
+
+[tasks.dependencies]
+run = "luarocks install luacheck"
 
 [tasks.format]
 description = "Format Lua scripts"
