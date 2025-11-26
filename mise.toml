@@ -5,6 +5,10 @@ experimental = true
 [env]
 MISE_USE_VERSIONS_HOST = "0"
 
+[env._.xcode-version]
+version = "26"
+version_file = "test-data/.xcode-version"
+
 [tools]
 actionlint = "latest"
 hk = "latest"
