@@ -24,5 +24,6 @@ PLUGIN = { -- luacheck: ignore
 	-- Optional: Legacy version files this plugin can parse
 	legacyFilenames = {
 		".xcode-version",
-	}
+		".config/.xcode-version",
+	},
 }
