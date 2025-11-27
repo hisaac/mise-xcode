@@ -10,7 +10,7 @@ stylua = "latest"
 xcodes = "latest"
 
 [hooks]
-postinstall = ["mise run dependencies"]
+postinstall = ["hk install --mise", "mise run dependencies"]
 
 [tasks.dependencies]
 run = "luarocks install luacheck"
