@@ -3,8 +3,15 @@
 -- Documentation: https://mise.jdx.dev/tool-plugin-development.html#preinstall-hook
 
 function PLUGIN:PreInstall(ctx)
-	local version = ctx.version
-	-- ctx.runtimeVersion contains the full version string if needed
+	local cmd = require("cmd")
+	local success, output = pcall(cmd.exec, "which xcodes")
+	if not success then
+		error("Command failed: " .. output)
+	end
+	local xcodes_bin = output
+	print(xcodes_bin)
+
+	-- local version = ctx.version
 
 	-- Example 1: Simple binary download
 	-- local url = "https://github.com/hisaac/mise-xcode/releases/download/v" .. version .. "/xcode-linux-amd64"
@@ -20,23 +27,23 @@ function PLUGIN:PreInstall(ctx)
 	-- local url = "https://raw.githubusercontent.com/hisaac/mise-xcode/" .. version .. "/bin/xcode"
 
 	-- Replace with your actual download URL pattern
-	local url = "https://example.com/xcode/releases/download/" .. version .. "/xcode"
+	-- local url = "https://example.com/xcode/releases/download/" .. version .. "/xcode"
 
 	-- Optional: Fetch checksum for verification
 	-- local sha256 = fetch_checksum(version) -- Implement if checksums are available
 
-	return {
-		version = version,
-		url = url,
-		-- sha256 = sha256, -- Optional but recommended for security
-		note = "Downloading xcode " .. version,
-		-- addition = { -- Optional: download additional components
-		--     {
-		--         name = "component",
-		--         url = "https://example.com/component.tar.gz"
-		--     }
-		-- }
-	}
+	-- return {
+	-- 	version = version,
+	-- 	url = url,
+	-- 	-- sha256 = sha256, -- Optional but recommended for security
+	-- 	note = "Downloading xcode " .. version,
+	-- 	-- addition = { -- Optional: download additional components
+	-- 	--     {
+	-- 	--         name = "component",
+	-- 	--         url = "https://example.com/component.tar.gz"
+	-- 	--     }
+	-- 	-- }
+	-- }
 end
 
 -- Helper function for platform detection (uncomment and modify as needed)

@@ -3,9 +3,9 @@
 set -euo pipefail
 
 mise plugin link --force xcode .
-mise cache clear
-mise ls-remote xcode
-# mise install xcode@1.0.0
+# mise cache clear
+# mise ls-remote xcode
+mise use xcode
 
 # Capture and display the output while also verifying it
 # output=$(mise exec "xcode@1.0.0" -- "xcode" --version)

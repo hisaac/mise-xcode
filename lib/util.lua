@@ -4,33 +4,12 @@ local UTIL = {}
 
 UTIL.xcodereleases_api_url = "https://xcodereleases.com/data.json"
 
-function UTIL.get_platform_info()
-	local is_windows = package.config:sub(1, 1) == "\\"
-	local cmd = require("cmd")
-	local strings = require("strings")
-
-	if is_windows then
-		return {
-			os = "windows",
-			arch = os.getenv("PROCESSOR_ARCHITECTURE") or "x64",
-		}
-	else
-		local uname = cmd.exec("uname -s"):lower()
-		local arch = cmd.exec("uname -m")
-
-		return {
-			os = strings.trim_space(uname),
-			arch = strings.trim_space(arch),
-		}
-	end
-end
-
 function UTIL.get_arch()
-	return UTIL.get_platform_info().arch
+	return RUNTIME.archType
 end
 
 function UTIL.get_os()
-	return UTIL.get_platform_info().os
+	return RUNTIME.osType
 end
 
 function UTIL.check_os()
