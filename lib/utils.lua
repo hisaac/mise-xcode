@@ -183,7 +183,7 @@ function UTILS.read_file(path, trimmed)
 
 	local file, err = io.open(path, "r")
 	if not file then
-		error("Could not open file '" .. path .. "': " .. (err or "unknown error"))
+		error("Could not open file '" .. path .. "': " .. tostring(err or "unknown error"))
 	end
 
 	local contents = file:read("*a")
