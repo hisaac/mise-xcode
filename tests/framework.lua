@@ -24,7 +24,7 @@ end
 function TestFramework:it(description, func)
 	local full_name = (self.current_suite or "") .. " > " .. description
 	local success, err = pcall(func)
-	
+
 	if success then
 		self.passed = self.passed + 1
 		print("  ✓ " .. description)
@@ -80,9 +80,8 @@ end
 
 function TestFramework:summary()
 	print("\n" .. string.rep("=", 50))
-	print(string.format("Tests: %d passed, %d failed, %d total", 
-		self.passed, self.failed, self.passed + self.failed))
-	
+	print(string.format("Tests: %d passed, %d failed, %d total", self.passed, self.failed, self.passed + self.failed))
+
 	if #self.errors > 0 then
 		print("\nFailures:")
 		for _, err_info in ipairs(self.errors) do
@@ -90,9 +89,9 @@ function TestFramework:summary()
 			print("  " .. err_info.error)
 		end
 	end
-	
+
 	print(string.rep("=", 50))
-	
+
 	return self.failed == 0
 end
 

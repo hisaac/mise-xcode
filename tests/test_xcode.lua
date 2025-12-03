@@ -16,7 +16,7 @@ test:describe("Xcode.new()", function()
 		test:assert_equal(xcode.path, "/Applications/Xcode.app")
 		test:assert_not_nil(xcode.version)
 	end)
-	
+
 	test:it("should create a version object from version string", function()
 		local xcode = Xcode.new("/Applications/Xcode.app", "16.4.1")
 		test:assert_equal(xcode.version.parts[1], 16)
@@ -32,7 +32,7 @@ test:describe("Xcode:__lt (less than)", function()
 		test:assert_true(xcode1 < xcode2)
 		test:assert_false(xcode2 < xcode1)
 	end)
-	
+
 	test:it("should handle different paths with same version", function()
 		local xcode1 = Xcode.new("/Applications/Xcode.app", "16.0.0")
 		local xcode2 = Xcode.new("/Users/test/Applications/Xcode.app", "16.0.0")
@@ -57,7 +57,7 @@ test:describe("Xcode:developer_dir()", function()
 		local dev_dir = xcode:developer_dir()
 		test:assert_equal(dev_dir, "/Applications/Xcode.app/Contents/Developer")
 	end)
-	
+
 	test:it("should work with different base paths", function()
 		local xcode = Xcode.new("/Users/test/Applications/Xcode_16.app", "16.0.0")
 		local dev_dir = xcode:developer_dir()

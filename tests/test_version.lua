@@ -18,7 +18,7 @@ test:describe("Version.new()", function()
 		test:assert_equal(v.parts[3], 0)
 		test:assert_equal(v.precision, 1)
 	end)
-	
+
 	test:it("should create a version from a two-part version string", function()
 		local v = Version.new("16.4")
 		test:assert_equal(v.raw, "16.4")
@@ -27,7 +27,7 @@ test:describe("Version.new()", function()
 		test:assert_equal(v.parts[3], 0)
 		test:assert_equal(v.precision, 2)
 	end)
-	
+
 	test:it("should create a version from a three-part version string", function()
 		local v = Version.new("16.4.1")
 		test:assert_equal(v.raw, "16.4.1")
@@ -36,7 +36,7 @@ test:describe("Version.new()", function()
 		test:assert_equal(v.parts[3], 1)
 		test:assert_equal(v.precision, 3)
 	end)
-	
+
 	test:it("should handle version strings with more than three parts", function()
 		local v = Version.new("16.4.1.2")
 		test:assert_equal(v.precision, 4)
@@ -54,21 +54,21 @@ test:describe("Version:__lt (less than)", function()
 		test:assert_true(v1 < v2)
 		test:assert_false(v2 < v1)
 	end)
-	
+
 	test:it("should compare minor versions correctly", function()
 		local v1 = Version.new("16.3.0")
 		local v2 = Version.new("16.4.0")
 		test:assert_true(v1 < v2)
 		test:assert_false(v2 < v1)
 	end)
-	
+
 	test:it("should compare patch versions correctly", function()
 		local v1 = Version.new("16.4.0")
 		local v2 = Version.new("16.4.1")
 		test:assert_true(v1 < v2)
 		test:assert_false(v2 < v1)
 	end)
-	
+
 	test:it("should return false for equal versions", function()
 		local v1 = Version.new("16.4.1")
 		local v2 = Version.new("16.4.1")
@@ -83,13 +83,13 @@ test:describe("Version:__eq (equality)", function()
 		local v2 = Version.new("16.4.1")
 		test:assert_true(v1 == v2)
 	end)
-	
+
 	test:it("should return false for different versions", function()
 		local v1 = Version.new("16.4.0")
 		local v2 = Version.new("16.4.1")
 		test:assert_false(v1 == v2)
 	end)
-	
+
 	test:it("should handle versions with different precision", function()
 		local v1 = Version.new("16")
 		local v2 = Version.new("16.0.0")
@@ -102,7 +102,7 @@ test:describe("Version:__tostring", function()
 		local v = Version.new("16.4.1")
 		test:assert_equal(tostring(v), "16.4.1")
 	end)
-	
+
 	test:it("should show padded zeros", function()
 		local v = Version.new("16")
 		test:assert_equal(tostring(v), "16.0.0")
@@ -115,37 +115,37 @@ test:describe("Version:matches_fuzzy", function()
 		local query = Version.new("16")
 		test:assert_true(v:matches_fuzzy(query))
 	end)
-	
+
 	test:it("should not match when major differs", function()
 		local v = Version.new("15.4.1")
 		local query = Version.new("16")
 		test:assert_false(v:matches_fuzzy(query))
 	end)
-	
+
 	test:it("should match when query has precision 2 (major.minor)", function()
 		local v = Version.new("16.4.1")
 		local query = Version.new("16.4")
 		test:assert_true(v:matches_fuzzy(query))
 	end)
-	
+
 	test:it("should not match when minor differs", function()
 		local v = Version.new("16.3.1")
 		local query = Version.new("16.4")
 		test:assert_false(v:matches_fuzzy(query))
 	end)
-	
+
 	test:it("should match when query has precision 3 (major.minor.patch)", function()
 		local v = Version.new("16.4.1")
 		local query = Version.new("16.4.1")
 		test:assert_true(v:matches_fuzzy(query))
 	end)
-	
+
 	test:it("should not match when patch differs", function()
 		local v = Version.new("16.4.0")
 		local query = Version.new("16.4.1")
 		test:assert_false(v:matches_fuzzy(query))
 	end)
-	
+
 	test:it("should allow different patch when query precision is 2", function()
 		local v1 = Version.new("16.4.0")
 		local v2 = Version.new("16.4.1")
