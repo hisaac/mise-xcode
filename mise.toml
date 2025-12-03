@@ -5,19 +5,19 @@ experimental = true
 [env]
 MISE_USE_VERSIONS_HOST = "0"
 
+[env._.xcode-version]
+version = "26"
+version_file = "test-data/.xcode-version"
+
 [tools]
 actionlint = "latest"
 hk = "latest"
 lua = "5.4"
 pkl = "latest"
 stylua = "latest"
-xcodes = "latest"
-
-[hooks]
-postinstall = "mise run bootstrap"
 
 [tasks.bootstrap]
-run = ["hk install --mise", "mise run install_dependencies"]
+run = ["hk install --mise", { task = "install_dependencies" }]
 
 [tasks.install_dependencies]
 hide = true

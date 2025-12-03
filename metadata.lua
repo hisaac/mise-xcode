@@ -1,15 +1,11 @@
 -- metadata.lua
 -- Plugin metadata and configuration
--- Documentation: https://mise.jdx.dev/tool-plugin-development.html#metadata-lua
+-- Documentation: https://mise.jdx.dev/env-plugin-development.html#metadata-lua
 
 PLUGIN = { -- luacheck: ignore
-	name = "xcode",
+	name = "xcode-version",
 	version = "1.0.0",
-	description = "A mise tool plugin for xcode",
+	description = "A mise env plugin for setting the Xcode version",
 	author = "Isaac Halvorson",
-	updateUrl = "https://github.com/hisaac/mise-xcode",
-	legacyFilenames = {
-		".xcode-version",
-		".config/.xcode-version",
-	},
+	homepage = "https://github.com/hisaac/mise-xcode",
 }
