@@ -37,6 +37,10 @@ run = "stylua metadata.lua hooks/"
 description = "Lint Lua scripts and GitHub Actions using hk"
 run = "hk check"
 
+[tasks.test]
+description = "Run unit tests"
+run = "./run_tests.sh"
+
 [tasks.ci]
 description = "Run all CI checks"
 depends = ["lint", "test"]

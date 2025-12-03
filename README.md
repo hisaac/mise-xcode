@@ -93,25 +93,42 @@ This sets up automatic linting and formatting on git commits.
 
 ### Local Testing
 
+#### Unit Tests
+
+This project includes comprehensive unit tests for all core modules (Version, Xcode, utils).
+
+Run tests **without mise** (requires Lua 5.1+):
+
+```bash
+./run_tests.sh
+```
+
+Or run tests **with mise**:
+
+```bash
+mise run test
+```
+
+The test suite includes:
+- `tests/test_version.lua` - Tests for Version parsing and comparison
+- `tests/test_xcode.lua` - Tests for Xcode object management
+- `tests/test_utils.lua` - Tests for utility functions
+
+#### Integration Testing
+
 1. Link your plugin for development:
 
 ```bash
 mise plugin link --force xcode .
 ```
 
-2. Run tests:
-
-```bash
-mise run test
-```
-
-3. Run linting:
+2. Run linting:
 
 ```bash
 mise run lint
 ```
 
-4. Run full CI suite:
+3. Run full CI suite:
 
 ```bash
 mise run ci
