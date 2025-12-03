@@ -53,7 +53,12 @@ end
 --- @param other table The other Version object to compare with.
 --- @return boolean True if versions are equal.
 function Version:__eq(other)
-	return self.parts[1] == other.parts[1] and self.parts[2] == other.parts[2] and self.parts[3] == other.parts[3]
+	for i = 1, MAX_VERSION_PARTS do
+		if self.parts[i] ~= other.parts[i] then
+			return false
+		end
+	end
+	return true
 end
 
 --- Converts the version to a string representation.
