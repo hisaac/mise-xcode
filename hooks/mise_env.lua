@@ -44,13 +44,10 @@ function PLUGIN:MiseEnv(ctx)
 		error(string.format("No Xcode installation matching version '%s' was found", xcode_version))
 	end
 
-	local developer_dir = best_version:developer_dir()
-	if developer_dir then
-		table.insert(env_vars, {
-			key = "DEVELOPER_DIR",
-			value = developer_dir,
-		})
-	end
+	table.insert(env_vars, {
+		key = "DEVELOPER_DIR",
+		value = best_version:developer_dir(),
+	})
 
 	return env_vars
 end

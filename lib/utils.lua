@@ -6,7 +6,6 @@ local Version = require("Version")
 
 -- Constants
 local XCODE_BUNDLE_ID = "com.apple.dt.Xcode"
-local DEFAULT_SEARCH_PATHS = { "/Applications" }
 local PLIST_INFO_PATH = "/Contents/Info.plist"
 
 local function trim(s)
@@ -87,12 +86,7 @@ end
 --- @param additional_search_paths table|string|nil A table of paths to search for Xcode versions, or a single path as a string.
 --- @return table A table of installed Xcode versions.
 function UTILS.get_installed_xcodes(additional_search_paths)
-	-- Start with default search paths
-	local xcode_search_paths = {}
-	for _, path in ipairs(DEFAULT_SEARCH_PATHS) do
-		table.insert(xcode_search_paths, path)
-	end
-
+	local xcode_search_paths = { "/Applications" }
 	local user_home_dir = os.getenv("HOME")
 	if user_home_dir and user_home_dir ~= "" then
 		table.insert(xcode_search_paths, user_home_dir .. "/Applications")
