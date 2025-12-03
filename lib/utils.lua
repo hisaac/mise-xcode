@@ -8,7 +8,6 @@ local Version = require("Version")
 local XCODE_BUNDLE_ID = "com.apple.dt.Xcode"
 local DEFAULT_SEARCH_PATHS = { "/Applications" }
 local PLIST_INFO_PATH = "/Contents/Info.plist"
-local DEVELOPER_PATH = "/Contents/Developer"
 
 local function trim(s)
 	-- ^%s* matches leading whitespace
