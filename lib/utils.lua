@@ -87,7 +87,12 @@ end
 --- @param additional_search_paths table|string|nil A table of paths to search for Xcode versions, or a single path as a string.
 --- @return table A table of installed Xcode versions.
 function UTILS.get_installed_xcodes(additional_search_paths)
-	local xcode_search_paths = { unpack(DEFAULT_SEARCH_PATHS) }
+	-- Start with default search paths
+	local xcode_search_paths = {}
+	for _, path in ipairs(DEFAULT_SEARCH_PATHS) do
+		table.insert(xcode_search_paths, path)
+	end
+
 	local user_home_dir = os.getenv("HOME")
 	if user_home_dir and user_home_dir ~= "" then
 		table.insert(xcode_search_paths, user_home_dir .. "/Applications")
@@ -179,7 +184,7 @@ end
 --- @return string The file contents.
 function UTILS.read_file(path, trimmed)
 	if not path or path == "" then
-		error("File path cannot be empty")
+		error("File path cannot be nil or empty")
 	end
 
 	local file, err = io.open(path, "r")
