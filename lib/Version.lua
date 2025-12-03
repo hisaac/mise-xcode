@@ -35,7 +35,7 @@ function Version.new(version_string)
 	return self
 end
 
--- Metamethods for version comparison
+--- Metamethods for version comparison
 
 --- Compares if this version is less than another version.
 --- @param other table The other Version object to compare with.
