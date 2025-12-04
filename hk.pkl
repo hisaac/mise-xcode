@@ -1,33 +1,36 @@
-amends "package://github.com/jdx/hk/releases/download/v1.2.0/hk@1.2.0#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.2.0/hk@1.2.0#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.25.0/hk@1.25.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.25.0/hk@1.25.0#/Builtins.pkl"
+
+fail_fast = false
+env {
+	["HK_MISE"] = "true"
+}
 
 local linters = new Mapping<String, Step> {
-    ["luacheck"] {
-        glob = "**/*.lua"
-        check = "luarocks install luacheck --local || true && ~/.luarocks/bin/luacheck {{files}}"
-    }
-    ["stylua"] {
-        glob = "**/*.lua"
-        check = "stylua --check {{files}}"
-        fix = "stylua {{files}}"
-    }
-    ["actionlint"] {
-        glob = ".github/workflows/*.{yml,yaml}"
-        check = "actionlint {{files}}"
-    }
+	["actionlint"] = Builtins.actionlint
+	["luacheck"] = Builtins.luacheck
+	["shellcheck"] = Builtins.shellcheck
+	["shfmt"] = Builtins.shfmt
+	["stylua"] = Builtins.stylua
+
+	["mise"] {
+		glob = "mise.toml"
+		check = "mise fmt --check"
+		fix = "mise fmt"
+	}
 }
 
 hooks {
-    ["pre-commit"] {
-        fix = true
-        stash = "git"
-        steps = linters
-    }
-    ["fix"] {
-        fix = true
-        steps = linters
-    }
-    ["check"] {
-        steps = linters
-    }
+	["pre-commit"] {
+		fix = true
+		stash = "git"
+		steps = linters
+	}
+	["fix"] {
+		fix = true
+		steps = linters
+	}
+	["check"] {
+		steps = linters
+	}
 }

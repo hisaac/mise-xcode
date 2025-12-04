@@ -4,34 +4,35 @@ std = "lua51"
 
 -- Globals defined by the mise/vfox plugin system
 globals = {
-    "PLUGIN",
+	"PLUGIN",
+	"RUNTIME",
 }
 
 -- Read-only globals from the plugin environment
 read_globals = {
-    -- vfox modules
-    "require",
-    "http",
-    "json",
+	-- vfox modules
+	"require",
+	"http",
+	"json",
 
-    -- Standard Lua globals
-    "os",
-    "io",
-    "table",
-    "string",
-    "math",
-    "error",
-    "ipairs",
-    "pairs",
-    "print",
-    "tostring",
-    "tonumber",
-    "type",
+	-- Standard Lua globals
+	"os",
+	"io",
+	"table",
+	"string",
+	"math",
+	"error",
+	"ipairs",
+	"pairs",
+	"print",
+	"tostring",
+	"tonumber",
+	"type",
 }
 
 ignore = {
-    "631", -- line is too long
-    "212", -- unused argument (self and ctx are often unused in simple hooks)
+	"631", -- line is too long
+	"212", -- unused argument (self and ctx are often unused in simple hooks)
 }
 
 -- Allow trailing whitespace (can be auto-fixed)
