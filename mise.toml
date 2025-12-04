@@ -50,4 +50,4 @@ run = "luarocks install --only-deps mise-xcode-dev-1.rockspec"
 
 [tasks._bootstrap_test_env]
 hide = true
-run = ["mise plugin link --force xcode-version .", "mise env"]
+run = "mise plugin link --force xcode-version ."

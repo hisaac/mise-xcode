@@ -24,7 +24,8 @@ jobs:
       - name: Test plugin on Ubuntu (expect failure)
         run: |
           set +e  # Don't exit on error
-          mise run _bootstrap_test_env --env integration-tests
+          mise run _bootstrap_test_env
+          mise env --env integration-tests
 
           # Check if it failed with the expected error message
           if grep -q "Xcode is only available for macOS" output.txt; then
@@ -45,7 +46,8 @@ jobs:
         shell: bash
         run: |
           set +e  # Don't exit on error
-          mise run _bootstrap_test_env --env integration-tests
+          mise run _bootstrap_test_env
+          mise env --env integration-tests
 
           # Check if it failed with the expected error message
           if grep -q "Xcode is only available for macOS" output.txt; then
@@ -63,7 +65,9 @@ jobs:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
       - name: Test plugin on macOS
-        run: mise run _bootstrap_test_env --env integration-tests
+        run: |
+          mise run _bootstrap_test_env
+          mise env --env integration-tests
 
   final:
     needs:
