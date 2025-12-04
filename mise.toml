@@ -10,6 +10,7 @@ actionlint = "latest"
 hk = "latest"
 lua = "5.4"
 pkl = "latest"
+shellcheck = "latest"
 shfmt = "latest"
 stylua = "latest"
 
