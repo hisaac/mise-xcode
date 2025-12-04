@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # run_tests.sh
-# Runs all unit tests without requiring mise
+# Runs all unit tests using LuaUnit
 
 set -e
 
@@ -29,6 +29,16 @@ if ! command -v lua &> /dev/null; then
 fi
 
 echo -e "${YELLOW}Using Lua:${NC} $(lua -v 2>&1 | head -n1)"
+
+# Check if LuaUnit is available
+if ! lua -e "require('luaunit')" &> /dev/null; then
+    echo -e "${RED}Error: LuaUnit not found${NC}"
+    echo "Please install LuaUnit via luarocks:"
+    echo "  luarocks install luaunit"
+    exit 1
+fi
+
+echo -e "${YELLOW}Using LuaUnit:${NC} $(lua -e "lu = require('luaunit'); print(lu._VERSION)")"
 echo ""
 
 # Track test results
@@ -39,7 +49,7 @@ PASSED_TESTS=()
 for test_file in "$PROJECT_ROOT/tests"/test_*.lua; do
     if [ -f "$test_file" ]; then
         test_name=$(basename "$test_file")
-        echo "Running $test_name..."
+        echo -e "${YELLOW}Running $test_name...${NC}"
         
         # Run the test from the project root directory
         if (cd "$PROJECT_ROOT" && lua "$test_file"); then

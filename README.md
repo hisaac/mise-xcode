@@ -95,11 +95,15 @@ This sets up automatic linting and formatting on git commits.
 
 #### Unit Tests
 
-This project includes comprehensive unit tests for all core modules (Version, Xcode, utils).
+This project includes comprehensive unit tests for all core modules (Version, Xcode, utils) using [LuaUnit](https://github.com/bluebird75/luaunit).
 
-Run tests **without mise** (requires Lua 5.1+):
+Run tests **without mise** (requires Lua 5.1+ and LuaUnit):
 
 ```bash
+# Install LuaUnit if not already installed
+luarocks install luaunit
+
+# Run tests
 ./run_tests.sh
 ```
 

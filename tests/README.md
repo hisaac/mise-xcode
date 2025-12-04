@@ -1,26 +1,32 @@
 # Unit Tests
 
-This directory contains unit tests for the mise-xcode plugin.
+This directory contains unit tests for the mise-xcode plugin using [LuaUnit](https://github.com/bluebird75/luaunit).
 
 ## Running Tests
 
 ### Without mise (standalone)
 
-Requires Lua 5.1 or later:
+Requires Lua 5.1 or later and LuaUnit:
 
 ```bash
+# Install LuaUnit
+luarocks install luaunit
+
+# Run tests
 ./run_tests.sh
 ```
 
 On macOS:
 ```bash
-brew install lua
+brew install lua luarocks
+luarocks install luaunit
 ./run_tests.sh
 ```
 
 On Ubuntu/Debian:
 ```bash
-apt-get install lua5.1
+apt-get install lua5.1 luarocks
+luarocks install luaunit
 ./run_tests.sh
 ```
 
@@ -32,45 +38,51 @@ mise run test
 
 ## Test Files
 
-- `framework.lua` - Simple test framework (no external dependencies)
 - `test_version.lua` - Tests for Version module (parsing, comparison, fuzzy matching)
 - `test_xcode.lua` - Tests for Xcode module (object creation, comparison, paths)
 - `test_utils.lua` - Tests for utils module (version selection logic)
 
 ## Writing Tests
 
-Tests use a simple built-in framework. Here's an example:
+Tests use [LuaUnit](https://github.com/bluebird75/luaunit), a popular Lua testing framework. Here's an example:
 
 ```lua
 -- Add lib directory to package path
-package.path = package.path .. ";./lib/?.lua;./tests/?.lua"
+package.path = package.path .. ";./lib/?.lua"
 
-local TestFramework = require("framework")
+local lu = require("luaunit")
 local YourModule = require("YourModule")
 
-local test = TestFramework.new()
+TestYourModule = {}
 
-test:describe("YourModule.new()", function()
-    test:it("should create an object", function()
-        local obj = YourModule.new("param")
-        test:assert_not_nil(obj)
-        test:assert_equal(obj.field, "expected_value")
-    end)
-end)
+function TestYourModule:testSomeFeature()
+    local obj = YourModule.new("param")
+    lu.assertNotNil(obj)
+    lu.assertEquals(obj.field, "expected_value")
+end
 
--- Run tests and exit with appropriate code
-local success = test:summary()
-os.exit(success and 0 or 1)
+function TestYourModule:testAnotherFeature()
+    local result = YourModule.someFunction()
+    lu.assertTrue(result)
+end
+
+-- Run tests
+os.exit(lu.LuaUnit.run())
 ```
 
 ### Available Assertions
 
-- `test:assert_equal(actual, expected, message)` - Assert equality
-- `test:assert_true(value, message)` - Assert true
-- `test:assert_false(value, message)` - Assert false
-- `test:assert_nil(value, message)` - Assert nil
-- `test:assert_not_nil(value, message)` - Assert not nil
-- `test:assert_error(func, message)` - Assert function throws error
+LuaUnit provides a rich set of assertions:
+
+- `lu.assertEquals(actual, expected)` - Assert equality
+- `lu.assertTrue(value)` - Assert true
+- `lu.assertFalse(value)` - Assert false
+- `lu.assertNil(value)` - Assert nil
+- `lu.assertNotNil(value)` - Assert not nil
+- `lu.assertStrContains(str, substr)` - Assert string contains substring
+- `lu.assertErrorMsgContains(expectedMsg, func)` - Assert function throws error with message
+
+See [LuaUnit documentation](https://luaunit.readthedocs.io/) for more assertions.
 
 ## Test Coverage
 
@@ -99,5 +111,5 @@ Current test coverage includes:
 ## Notes
 
 - Tests are designed to run independently without mise
+- Tests use LuaUnit framework for consistency and better reporting
 - OS-dependent functions (plist reading, xcode detection) are only testable on macOS
-- The test framework is intentionally minimal to avoid external dependencies
