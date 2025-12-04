@@ -10,16 +10,19 @@ function PLUGIN:MiseEnv(ctx)
 	local xcode_version_file = ctx.options.version_file
 	local debug_mode = ctx.options.debug or false
 
+	-- Ensure we're running on macOS
 	utils.check_os()
 
+	-- Determine the Xcode version to use
 	if not xcode_version then
 		if xcode_version_file then
 			xcode_version = utils.read_file(xcode_version_file, true)
 		else
-			error("Either an Xcode version or a file containing the Xcode version must be specified")
+			error("Either 'version' or 'version_file' must be specified in mise configuration")
 		end
 	end
 
+	-- Find all installed Xcode versions
 	local installed_xcodes = utils.get_installed_xcodes(additional_search_paths)
 
 	if debug_mode then
@@ -34,17 +37,17 @@ function PLUGIN:MiseEnv(ctx)
 		end
 	end
 
+	-- Select the best matching version
 	local best_version = utils.select_best_version(installed_xcodes, xcode_version)
 
-	if best_version then
-		local developer_dir = best_version:developer_dir()
-		if developer_dir then
-			table.insert(env_vars, {
-				key = "DEVELOPER_DIR",
-				value = developer_dir,
-			})
-		end
+	if not best_version then
+		error(string.format("No Xcode installation matching version '%s' was found", xcode_version))
 	end
+
+	table.insert(env_vars, {
+		key = "DEVELOPER_DIR",
+		value = best_version:developer_dir(),
+	})
 
 	return env_vars
 end
