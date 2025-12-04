@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  ci:
+  unit-test:
     name: Unit Tests
     runs-on: macos-latest
     steps:
@@ -68,3 +68,38 @@ jobs:
       - uses: jdx/mise-action@v3
       - name: Test plugin on macOS
         run: mise run _bootstrap_test_env
+
+  final:
+    needs:
+      - unit-test
+      - integration-test-macos
+      - integration-test-ubuntu
+      - integration-test-windows
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const results = {
+              'unit-test': '${{ needs.unit-test.result }}',
+              'integration-test-ubuntu': '${{ needs.integration-test-ubuntu.result }}',
+              'integration-test-macos': '${{ needs.integration-test-macos.result }}',
+              'integration-test-windows': '${{ needs.integration-test-windows.result }}',
+            };
+
+            let allPassed = true;
+            let failingJobs = [];
+
+            for (const jobName in results) {
+              if (results[jobName] !== 'success') {
+                allPassed = false;
+                failingJobs.push(jobName);
+              }
+            }
+
+            if (!allPassed) {
+              core.setFailed(`The following jobs failed or were skipped: ${failingJobs.join(', ')}`);
+            } else {
+              console.log('All CI jobs completed successfully');
+            }
