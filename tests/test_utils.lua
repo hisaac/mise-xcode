@@ -34,7 +34,7 @@ function TestUtils:testSelectHighestMatchingVersionWithMajorOnly()
 
 	local result = utils.select_best_version(xcodes, "16")
 	lu.assertNotNil(result)
-	lu.assertEquals(tostring(result.version), "16.4.1")
+	lu.assertEquals(tostring(result.version), "16.4.1", "Should select highest 16.x version")
 end
 
 function TestUtils:testSelectHighestMatchingVersionWithMajorMinor()
@@ -48,7 +48,7 @@ function TestUtils:testSelectHighestMatchingVersionWithMajorMinor()
 
 	local result = utils.select_best_version(xcodes, "16.4")
 	lu.assertNotNil(result)
-	lu.assertEquals(tostring(result.version), "16.4.2")
+	lu.assertEquals(tostring(result.version), "16.4.2", "Should select highest 16.4.x version")
 end
 
 function TestUtils:testReturnNilWhenNoMatchFound()
@@ -59,12 +59,12 @@ function TestUtils:testReturnNilWhenNoMatchFound()
 	}
 
 	local result = utils.select_best_version(xcodes, "17.0")
-	lu.assertNil(result)
+	lu.assertNil(result, "Should return nil when no matching version found")
 end
 
 function TestUtils:testHandleEmptyList()
 	local result = utils.select_best_version({}, "16.4")
-	lu.assertNil(result)
+	lu.assertNil(result, "Should return nil for empty list")
 end
 
 function TestUtils:testPreferHigherPatchVersions()
@@ -100,7 +100,7 @@ function TestUtils:testCheckOsValidation()
 		local success = pcall(function()
 			utils.check_os()
 		end)
-		lu.assertTrue(success)
+		lu.assertTrue(success, "check_os should not error on macOS")
 	else
 		-- On other systems, this should error
 		local success, err = pcall(function()

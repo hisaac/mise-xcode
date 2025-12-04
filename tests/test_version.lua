@@ -88,7 +88,7 @@ end
 function TestVersion:testHandleVersionsWithDifferentPrecision()
 	local v1 = Version.new("16")
 	local v2 = Version.new("16.0.0")
-	lu.assertTrue(v1 == v2)
+	lu.assertTrue(v1 == v2, "16 should equal 16.0.0")
 end
 
 function TestVersion:testConvertVersionToString()
