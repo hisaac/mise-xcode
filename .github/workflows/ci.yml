@@ -10,13 +10,12 @@ on:
 
 jobs:
   ci:
+    name: Unit Tests
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
       - run: mise run ci
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   integration-test-ubuntu:
     name: Integration Test (Ubuntu - Should Fail)
@@ -27,8 +26,7 @@ jobs:
       - name: Test plugin on Ubuntu (expect failure)
         run: |
           set +e  # Don't exit on error
-          mise plugin link --force xcode-version .
-          mise use xcode-version@16.4 2>&1 | tee output.txt
+          mise run _bootstrap_test_env
 
           # Check if it failed with the expected error message
           if grep -q "Xcode is only available for macOS" output.txt; then
@@ -50,15 +48,14 @@ jobs:
         shell: bash
         run: |
           set +e  # Don't exit on error
-          mise plugin link --force xcode-version .
-          mise use xcode-version@16.4 2>&1 | tee output.txt
+          mise run _bootstrap_test_env
 
           # Check if it failed with the expected error message
           if grep -q "Xcode is only available for macOS" output.txt; then
-            echo "✓ Plugin correctly failed on Windows with expected error"
+            echo "✓ Plugin correctly failed on Ubuntu with expected error"
             exit 0
           else
-            echo "✗ Plugin did not fail as expected on Windows"
+            echo "✗ Plugin did not fail as expected on Ubuntu"
             cat output.txt
             exit 1
           fi
@@ -70,23 +67,4 @@ jobs:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
       - name: Test plugin on macOS
-        run: |
-          mise plugin link --force xcode-version .
-
-          # Try to activate the plugin with a version
-          # This will attempt to find an installed Xcode
-          # It might not find the exact version, but should not error about macOS
-          set +e
-          mise use xcode-version@16.4 2>&1 | tee output.txt
-          exit_code=$?
-
-          # Check that we didn't get the "macOS only" error
-          if grep -q "Xcode is only available for macOS" output.txt; then
-            echo "✗ Plugin incorrectly failed on macOS"
-            exit 1
-          fi
-
-          # The plugin should work on macOS (even if no matching Xcode is found)
-          echo "✓ Plugin ran on macOS without OS-level errors"
-          echo "Exit code: $exit_code"
-          cat output.txt
+        run: mise run _bootstrap_test_env
