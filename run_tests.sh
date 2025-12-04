@@ -38,7 +38,7 @@ if ! lua -e "require('luaunit')" &> /dev/null; then
     exit 1
 fi
 
-echo -e "${YELLOW}Using LuaUnit:${NC} $(lua -e "lu = require('luaunit'); print(lu._VERSION)")"
+echo -e "${YELLOW}Using LuaUnit${NC}"
 echo ""
 
 # Track test results

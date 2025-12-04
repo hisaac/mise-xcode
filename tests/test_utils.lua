@@ -103,9 +103,11 @@ function TestUtils:testCheckOsValidation()
 		lu.assertTrue(success)
 	else
 		-- On other systems, this should error
-		lu.assertErrorMsgContains("Xcode is only available for macOS", function()
+		local success, err = pcall(function()
 			utils.check_os()
 		end)
+		lu.assertFalse(success)
+		lu.assertTrue(err:find("Xcode is only available for macOS") ~= nil)
 	end
 end
 

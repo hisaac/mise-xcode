@@ -40,9 +40,9 @@ end
 function TestXcode:testConvertXcodeToStringWithVersionAndPath()
 	local xcode = Xcode.new("/Applications/Xcode.app", "16.4.1")
 	local str = tostring(xcode)
-	lu.assertStrContains(str, "Xcode")
-	lu.assertStrContains(str, "16.4.1")
-	lu.assertStrContains(str, "/Applications/Xcode.app")
+	lu.assertTrue(str:find("Xcode") ~= nil)
+	lu.assertTrue(str:find("16.4.1") ~= nil)
+	lu.assertTrue(str:find("/Applications/Xcode.app") ~= nil)
 end
 
 function TestXcode:testReturnCorrectDeveloperDirectoryPath()
