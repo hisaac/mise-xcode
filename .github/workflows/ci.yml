@@ -16,15 +16,27 @@ jobs:
       - uses: jdx/mise-action@v3
       - run: mise run ci
 
-  integration-test-ubuntu:
-    runs-on: ubuntu-latest
+  integration-test:
+    strategy:
+      matrix:
+        runs-on: [macos-latest, ubuntu-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
-      - name: Test plugin on Ubuntu (expect failure)
+
+      - name: Test plugin on macOS
+        if: matrix.runs-on == 'macos-latest'
+        run: |
+          mise run _bootstrap_test_env
+          mise env --env integration-tests
+
+      - name: Test plugin on Ubuntu
+        if: matrix.runs-on == 'ubuntu-latest'
         run: |
           set +e  # Don't exit on error
-          mise run _bootstrap_test_env
+          mise run _bootstrap_test_env || true | tee output.txt
           mise env --env integration-tests
 
           # Check if it failed with the expected error message
@@ -37,21 +49,10 @@ jobs:
             exit 1
           fi
 
-  integration-test-macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v3
-      - name: Test plugin on macOS
-        run: |
-          mise run _bootstrap_test_env
-          mise env --env integration-tests
-
   final:
     needs:
       - unit-test
-      - integration-test-macos
-      - integration-test-ubuntu
+      - integration-test
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -60,8 +61,7 @@ jobs:
           script: |
             const results = {
               'unit-test': '${{ needs.unit-test.result }}',
-              'integration-test-ubuntu': '${{ needs.integration-test-ubuntu.result }}',
-              'integration-test-macos': '${{ needs.integration-test-macos.result }}',
+              'integration-test': '${{ needs.integration-test.result }}',
             };
 
             let allPassed = true;
