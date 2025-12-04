@@ -27,7 +27,11 @@ function test-linux() {
 	set +e # Don't exit on error
 
 	local -r temp_file=$(mktemp)
-	mise plugin link --force xcode-version . 2>&1 | tee "${temp_file}"
+	mise plugin link --force xcode-version .
+	mise env --env integration-tests 2>&1 | tee "${temp_file}"
+
+	echo "temp_file contents:"
+	cat "${temp_file}"
 
 	# Check if it failed with the expected error message
 	if grep -q "Xcode is only available for macOS" "${temp_file}"; then
