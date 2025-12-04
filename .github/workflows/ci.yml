@@ -1,5 +1,5 @@
 ---
-name: CI
+name: ci
 
 on:
   push:
@@ -10,15 +10,13 @@ on:
 
 jobs:
   unit-test:
-    name: Unit Tests
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
       - run: mise run ci
 
   integration-test-ubuntu:
-    name: Integration Test (Ubuntu)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -39,7 +37,6 @@ jobs:
           fi
 
   integration-test-windows:
-    name: Integration Test (Windows)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
@@ -61,7 +58,6 @@ jobs:
           fi
 
   integration-test-macos:
-    name: Integration Test (macOS)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
