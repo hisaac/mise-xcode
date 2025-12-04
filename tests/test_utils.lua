@@ -107,7 +107,7 @@ function TestUtils:testCheckOsValidation()
 			utils.check_os()
 		end)
 		lu.assertFalse(success)
-		lu.assertTrue(err:find("Xcode is only available for macOS") ~= nil)
+		lu.assertTrue(tostring(err):find("Xcode is only available for macOS") ~= nil)
 	end
 end
 
