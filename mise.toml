@@ -28,7 +28,11 @@ run = "hk check"
 
 [tasks.test]
 description = "Run unit tests"
-run = "./run_tests.sh"
+run = [
+	"mise plugin link --force xcode-version .",
+	"mise env",
+	"scripts/test.bash",
+]
 
 [tasks.ci]
 description = "Run all CI checks"
