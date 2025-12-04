@@ -30,12 +30,15 @@ description = "Format all code using hk"
 run = "hk fix --all"
 
 [tasks.test]
-depends = ["_bootstrap_test_env"]
-description = "Run unit tests"
-run = "scripts/test.bash"
+depends = ["unit-test", "integration-test"]
+
+[tasks.unit-test]
+run = "scripts/unit-test.bash"
+
+[tasks.integration-test]
+run = "scripts/integration-test.bash"
 
 [tasks.ci]
-description = "Run all CI checks"
 depends = ["lint", "test"]
 
 # Hidden tasks
@@ -47,7 +50,3 @@ run = "hk install --mise"
 [tasks._bootstrap_luarocks]
 hide = true
 run = "luarocks install --only-deps mise-xcode-dev-1.rockspec"
-
-[tasks._bootstrap_test_env]
-hide = true
-run = "mise plugin link --force xcode-version ."

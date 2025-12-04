@@ -9,14 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  unit-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v3
-      - run: mise run ci
-
-  integration-test:
+  test:
     strategy:
       matrix:
         runs-on: [macos-latest, ubuntu-latest]
@@ -25,31 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
-
-      - name: Test plugin on macOS
-        if: matrix.runs-on == 'macos-latest'
-        run: mise run _bootstrap_test_env
-
-      - name: Test plugin on Ubuntu
-        if: matrix.runs-on == 'ubuntu-latest'
-        run: |
-          set +e  # Don't exit on error
-          mise run _bootstrap_test_env 2>&1 | tee output.txt
-
-          # Check if it failed with the expected error message
-          if grep -q "Xcode is only available for macOS" output.txt; then
-            echo "✓ Plugin correctly failed on Ubuntu with expected error"
-            exit 0
-          else
-            echo "✗ Plugin did not fail as expected on Ubuntu"
-            cat output.txt
-            exit 1
-          fi
+      - run: mise run test
 
   final:
-    needs:
-      - unit-test
-      - integration-test
+    needs: [test]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -57,8 +29,7 @@ jobs:
         with:
           script: |
             const results = {
-              'unit-test': '${{ needs.unit-test.result }}',
-              'integration-test': '${{ needs.integration-test.result }}',
+              'test': '${{ needs.test.result }}',
             };
 
             let allPassed = true;
