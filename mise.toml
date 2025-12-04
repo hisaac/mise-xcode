@@ -22,12 +22,10 @@ depends = ["_bootstrap_hk", "_bootstrap_luarocks"]
 
 [tasks.lint]
 alias = "check"
-description = "Lint all code using hk"
 run = "hk check --all"
 
 [tasks.format]
 alias = ["fix", "fmt"]
-description = "Format all code using hk"
 run = "hk fix --all"
 
 [tasks.test]

@@ -12,66 +12,24 @@ if [[ "${DEBUG:-}" == "true" || "${TRACE:-}" == "true" || "${RUNNER_DEBUG:-}" ==
 	set -o xtrace # Trace the execution of the script (debug)
 fi
 
-# Colors for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
 function main() {
-	echo "Running unit tests for mise-xcode..."
-	echo "======================================"
-
-	echo -e "${YELLOW}Using LuaUnit${NC}"
-	echo ""
-
-	# Track test results
-	local failed_tests=()
-	local passed_tests=()
-
-	# Run each test file
-	for test_file in "$MISE_PROJECT_ROOT/tests"/test_*.lua; do
-		if [ -f "$test_file" ]; then
-			test_name=$(basename "$test_file")
-			echo -e "${YELLOW}Running $test_name...${NC}"
-
-			# Run the test from the project root directory
-			if (cd "$MISE_PROJECT_ROOT" && lua "$test_file"); then
-				passed_tests+=("$test_name")
-			else
-				failed_tests+=("$test_name")
-			fi
-			echo ""
+	local -a failures=()
+	set +e
+	for test_file in "${MISE_PROJECT_ROOT}"/tests/test_*.lua; do
+		echo "==> Running test file: $test_file"
+		if ! lua "$test_file" --verbose; then
+			failures+=("$test_file")
 		fi
+		echo
 	done
-
-	# Print summary
-	echo "======================================"
-	echo "Test Summary"
-	echo "======================================"
-	echo -e "${GREEN}Passed:${NC} ${#passed_tests[@]}"
-	if [ ${#passed_tests[@]} -gt 0 ]; then
-		for test in "${passed_tests[@]}"; do
-			echo -e "  ${GREEN}✓${NC} $test"
+	set -e
+	if [[ ${#failures[@]} -gt 0 ]]; then
+		echo "==> Failed test suites:"
+		for failure in "${failures[@]}"; do
+			echo "  - $failure"
 		done
-	fi
-
-	echo -e "${RED}Failed:${NC} ${#failed_tests[@]}"
-	if [ ${#failed_tests[@]} -gt 0 ]; then
-		for test in "${failed_tests[@]}"; do
-			echo -e "  ${RED}✗${NC} $test"
-		done
-	fi
-
-	echo "======================================"
-
-	# Exit with error if any tests failed
-	if [ ${#failed_tests[@]} -gt 0 ]; then
 		exit 1
 	fi
-
-	echo -e "${GREEN}All tests passed!${NC}"
-	exit 0
 }
 
 trap handle_exit EXIT
