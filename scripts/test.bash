@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# run_tests.sh
+# test.sh
 # Runs all unit tests using LuaUnit
 
 set -e
@@ -18,24 +18,24 @@ echo "Running unit tests for mise-xcode..."
 echo "======================================"
 
 # Check if lua is available
-if ! command -v lua &> /dev/null; then
-    echo -e "${RED}Error: lua command not found${NC}"
-    echo "Please install Lua 5.1 or later to run tests"
-    echo "You can install it via:"
-    echo "  - macOS: brew install lua"
-    echo "  - Ubuntu/Debian: apt-get install lua5.1"
-    echo "  - Or use mise: mise install lua && mise use lua"
-    exit 1
+if ! command -v lua &>/dev/null; then
+	echo -e "${RED}Error: lua command not found${NC}"
+	echo "Please install Lua 5.1 or later to run tests"
+	echo "You can install it via:"
+	echo "  - macOS: brew install lua"
+	echo "  - Ubuntu/Debian: apt-get install lua5.1"
+	echo "  - Or use mise: mise install lua && mise use lua"
+	exit 1
 fi
 
 echo -e "${YELLOW}Using Lua:${NC} $(lua -v 2>&1 | head -n1)"
 
 # Check if LuaUnit is available
-if ! lua -e "require('luaunit')" &> /dev/null; then
-    echo -e "${RED}Error: LuaUnit not found${NC}"
-    echo "Please install LuaUnit via luarocks:"
-    echo "  luarocks install luaunit"
-    exit 1
+if ! lua -e "require('luaunit')" &>/dev/null; then
+	echo -e "${RED}Error: LuaUnit not found${NC}"
+	echo "Please install LuaUnit via luarocks:"
+	echo "  luarocks install luaunit"
+	exit 1
 fi
 
 echo -e "${YELLOW}Using LuaUnit${NC}"
@@ -47,18 +47,18 @@ PASSED_TESTS=()
 
 # Run each test file
 for test_file in "$PROJECT_ROOT/tests"/test_*.lua; do
-    if [ -f "$test_file" ]; then
-        test_name=$(basename "$test_file")
-        echo -e "${YELLOW}Running $test_name...${NC}"
-        
-        # Run the test from the project root directory
-        if (cd "$PROJECT_ROOT" && lua "$test_file"); then
-            PASSED_TESTS+=("$test_name")
-        else
-            FAILED_TESTS+=("$test_name")
-        fi
-        echo ""
-    fi
+	if [ -f "$test_file" ]; then
+		test_name=$(basename "$test_file")
+		echo -e "${YELLOW}Running $test_name...${NC}"
+
+		# Run the test from the project root directory
+		if (cd "$PROJECT_ROOT" && lua "$test_file"); then
+			PASSED_TESTS+=("$test_name")
+		else
+			FAILED_TESTS+=("$test_name")
+		fi
+		echo ""
+	fi
 done
 
 # Print summary
@@ -67,23 +67,23 @@ echo "Test Summary"
 echo "======================================"
 echo -e "${GREEN}Passed:${NC} ${#PASSED_TESTS[@]}"
 if [ ${#PASSED_TESTS[@]} -gt 0 ]; then
-    for test in "${PASSED_TESTS[@]}"; do
-        echo -e "  ${GREEN}✓${NC} $test"
-    done
+	for test in "${PASSED_TESTS[@]}"; do
+		echo -e "  ${GREEN}✓${NC} $test"
+	done
 fi
 
 echo -e "${RED}Failed:${NC} ${#FAILED_TESTS[@]}"
 if [ ${#FAILED_TESTS[@]} -gt 0 ]; then
-    for test in "${FAILED_TESTS[@]}"; do
-        echo -e "  ${RED}✗${NC} $test"
-    done
+	for test in "${FAILED_TESTS[@]}"; do
+		echo -e "  ${RED}✗${NC} $test"
+	done
 fi
 
 echo "======================================"
 
 # Exit with error if any tests failed
 if [ ${#FAILED_TESTS[@]} -gt 0 ]; then
-    exit 1
+	exit 1
 fi
 
 echo -e "${GREEN}All tests passed!${NC}"
