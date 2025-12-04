@@ -18,9 +18,10 @@ stylua = "latest"
 postinstall = "mise run bootstrap"
 
 [tasks.bootstrap]
-run = [{ task = "_bootstrap_hk" }, { task = "_bootstrap_luarocks" }]
+depends = ["_bootstrap_hk", "_bootstrap_luarocks"]
 
 [tasks.lint]
+alias = "check"
 description = "Lint all code using hk"
 run = "hk check --all"
 
@@ -37,9 +38,6 @@ run = "scripts/unit-test.bash"
 
 [tasks.integration-test]
 run = "scripts/integration-test.bash"
-
-[tasks.ci]
-depends = ["lint", "test"]
 
 # Hidden tasks
 

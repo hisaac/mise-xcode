@@ -1,7 +1,0 @@
-mise ERROR runtime error: ...local/share/mise/plugins/xcode-version/lib/utils.lua:171: Xcode is only available for macOS
-stack traceback:
-        [C]: in function 'error'
-        ...local/share/mise/plugins/xcode-version/lib/utils.lua:171: in field 'check_os'
-        .../share/mise/plugins/xcode-version/hooks/mise_env.lua:14: in function 'PLUGIN.MiseEnv'
-        (...tail calls...)
-mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information

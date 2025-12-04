@@ -30,15 +30,13 @@ function test-linux() {
 	mise plugin link --force xcode-version .
 	mise env --env integration-tests 2>&1 | tee "${temp_file}"
 
-	echo "temp_file contents:"
-	cat "${temp_file}"
-
 	# Check if it failed with the expected error message
 	if grep -q "Xcode is only available for macOS" "${temp_file}"; then
 		echo "✓ Plugin correctly failed on Ubuntu with expected error"
 		exit 0
 	else
 		echo "✗ Plugin did not fail as expected on Ubuntu"
+		echo "temp_file contents:"
 		cat "${temp_file}"
 		exit 1
 	fi
