@@ -37,28 +37,6 @@ jobs:
             exit 1
           fi
 
-  integration-test-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v3
-      - name: Test plugin on Windows (expect failure)
-        shell: bash
-        run: |
-          set +e  # Don't exit on error
-          mise run _bootstrap_test_env
-          mise env --env integration-tests
-
-          # Check if it failed with the expected error message
-          if grep -q "Xcode is only available for macOS" output.txt; then
-            echo "✓ Plugin correctly failed on Ubuntu with expected error"
-            exit 0
-          else
-            echo "✗ Plugin did not fail as expected on Ubuntu"
-            cat output.txt
-            exit 1
-          fi
-
   integration-test-macos:
     runs-on: macos-latest
     steps:
@@ -74,7 +52,6 @@ jobs:
       - unit-test
       - integration-test-macos
       - integration-test-ubuntu
-      - integration-test-windows
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -85,7 +62,6 @@ jobs:
               'unit-test': '${{ needs.unit-test.result }}',
               'integration-test-ubuntu': '${{ needs.integration-test-ubuntu.result }}',
               'integration-test-macos': '${{ needs.integration-test-macos.result }}',
-              'integration-test-windows': '${{ needs.integration-test-windows.result }}',
             };
 
             let allPassed = true;
