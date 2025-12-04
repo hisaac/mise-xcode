@@ -28,16 +28,13 @@ jobs:
 
       - name: Test plugin on macOS
         if: matrix.runs-on == 'macos-latest'
-        run: |
-          mise run _bootstrap_test_env
-          mise env --env integration-tests
+        run: mise run _bootstrap_test_env
 
       - name: Test plugin on Ubuntu
         if: matrix.runs-on == 'ubuntu-latest'
         run: |
           set +e  # Don't exit on error
-          mise run _bootstrap_test_env || true | tee output.txt
-          mise env --env integration-tests
+          mise run _bootstrap_test_env 2>&1 | tee output.txt
 
           # Check if it failed with the expected error message
           if grep -q "Xcode is only available for macOS" output.txt; then
