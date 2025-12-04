@@ -8,7 +8,7 @@ Xcode.__index = Xcode
 --- Creates a new Xcode object
 -- @param version string The version number of Xcode
 -- @param path string The file system path to the Xcode app bundle
--- @reurn table A new Xcode object
+-- @return table A new Xcode object
 function Xcode.new(path, version_string)
 	local self = setmetatable({}, Xcode)
 	self.path = path

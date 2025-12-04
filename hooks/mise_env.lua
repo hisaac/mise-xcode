@@ -26,7 +26,7 @@ function PLUGIN:MiseEnv(ctx)
 		if #installed_xcodes == 0 then
 			print("No Xcode installations found.")
 		else
-			print("\nFound " .. #installed_xcodes .. "")
+			print("\nFound " .. #installed_xcodes .. " Xcode installations:")
 			print("-----------------------------------------------------")
 			for _, app in ipairs(installed_xcodes) do
 				print(app)
