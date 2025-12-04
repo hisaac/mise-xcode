@@ -18,7 +18,7 @@ jobs:
       - run: mise run ci
 
   integration-test-ubuntu:
-    name: Integration Test (Ubuntu - Should Fail)
+    name: Integration Test (Ubuntu)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -26,7 +26,7 @@ jobs:
       - name: Test plugin on Ubuntu (expect failure)
         run: |
           set +e  # Don't exit on error
-          mise run _bootstrap_test_env
+          mise run _bootstrap_test_env --env integration-tests
 
           # Check if it failed with the expected error message
           if grep -q "Xcode is only available for macOS" output.txt; then
@@ -39,7 +39,7 @@ jobs:
           fi
 
   integration-test-windows:
-    name: Integration Test (Windows - Should Fail)
+    name: Integration Test (Windows)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
@@ -48,7 +48,7 @@ jobs:
         shell: bash
         run: |
           set +e  # Don't exit on error
-          mise run _bootstrap_test_env
+          mise run _bootstrap_test_env --env integration-tests
 
           # Check if it failed with the expected error message
           if grep -q "Xcode is only available for macOS" output.txt; then
@@ -61,13 +61,13 @@ jobs:
           fi
 
   integration-test-macos:
-    name: Integration Test (macOS - Should Work)
+    name: Integration Test (macOS)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
       - name: Test plugin on macOS
-        run: mise run _bootstrap_test_env
+        run: mise run _bootstrap_test_env --env integration-tests
 
   final:
     needs:
