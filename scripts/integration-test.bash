@@ -11,24 +11,38 @@ if [[ "${DEBUG:-}" == "true" || "${TRACE:-}" == "true" || "${RUNNER_DEBUG:-}" ==
 fi
 
 function main() {
+	local -r temp_file=$(mktemp)
+
+	set +o errexit # Don't exit on error
+	mise plugin link --force xcode-version .
+	mise env --env integration-tests 2>&1 | tee "${temp_file}"
+	set -o errexit
+
 	local -r os="$(uname -s | tr '[:upper:]' '[:lower:]')"
 	case "${os}" in
-	darwin*) test-macos ;;
-	linux*) test-linux ;;
+	darwin*) test-macos "${temp_file}" ;;
+	linux*) test-linux "${temp_file}" ;;
 	*) echo "Unsupported OS: $os" ;;
 	esac
 }
 
 function test-macos() {
-	mise plugin link --force xcode-version .
+	local -r temp_file="${1}"
+
+	# Check if an entry for DEVELOPER_DIR is present in the output
+	if grep -q "DEVELOPER_DIR" "${temp_file}"; then
+		echo "✓ Plugin correctly set DEVELOPER_DIR on macOS"
+		exit 0
+	else
+		echo "✗ Plugin did not set DEVELOPER_DIR as expected on macOS"
+		echo "temp_file contents:"
+		cat "${temp_file}"
+		exit 1
+	fi
 }
 
 function test-linux() {
-	set +e # Don't exit on error
-
-	local -r temp_file=$(mktemp)
-	mise plugin link --force xcode-version .
-	mise env --env integration-tests 2>&1 | tee "${temp_file}"
+	local -r temp_file="${1}"
 
 	# Check if it failed with the expected error message
 	if grep -q "Xcode is only available for macOS" "${temp_file}"; then
