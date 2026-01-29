@@ -7,12 +7,16 @@ includes = ["scripts"]
 [tools]
 actionlint = "latest"
 hk = "latest"
-lua = "5.5"
+lua = "5.4"
 pkl = "latest"
 shellcheck = "latest"
 shfmt = "latest"
 stylua = "latest"
 yamlfmt = "latest"
+
+[plugins]
+# Temporary fix for luarocks download and install issues
+lua = "https://github.com/hisaac/vfox-lua.git#hisaac/fix-luarocks-download-and-install"
 
 [hooks]
 postinstall = "mise run bootstrap"
