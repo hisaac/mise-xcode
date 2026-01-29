@@ -45,6 +45,23 @@ function TestVersion:testHandleVersionStringsWithMoreThanThreeParts()
 	lu.assertEquals(v.parts[3], 1)
 end
 
+function TestVersion:testHandleVersionStringsWithNonNumericParts()
+	local v = Version.new("16b2")
+	lu.assertEquals(v.precision, 2)
+	lu.assertEquals(v.parts[1], 16)
+	lu.assertEquals(v.parts[2], 2)
+	lu.assertEquals(v.parts[3], 0)
+end
+
+function TestVersion:testHandleEmptyVersionString()
+	local v = Version.new("")
+	lu.assertEquals(v.precision, 0)
+	lu.assertEquals(v.parts[1], 0)
+	lu.assertEquals(v.parts[2], 0)
+	lu.assertEquals(v.parts[3], 0)
+	lu.assertEquals(tostring(v), "0.0.0")
+end
+
 function TestVersion:testCompareMajorVersionsCorrectly()
 	local v1 = Version.new("15.0.0")
 	local v2 = Version.new("16.0.0")
@@ -144,6 +161,3 @@ function TestVersion:testAllowDifferentPatchWhenQueryPrecisionIs2()
 	lu.assertTrue(v1:matches_fuzzy(query))
 	lu.assertTrue(v2:matches_fuzzy(query))
 end
-
--- Run tests
-os.exit(lu.LuaUnit.run())

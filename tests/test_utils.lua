@@ -67,6 +67,31 @@ function TestUtils:testHandleEmptyList()
 	lu.assertNil(result, "Should return nil for empty list")
 end
 
+function TestUtils:testHandleNilList()
+	local result = utils.select_best_version(nil, "16.4")
+	lu.assertNil(result, "Should return nil for nil list")
+end
+
+function TestUtils:testHandleNilDesiredVersion()
+	local Xcode = require("Xcode")
+	local xcodes = {
+		Xcode.new("/Applications/Xcode.app", "16.4.1"),
+	}
+
+	local result = utils.select_best_version(xcodes, nil)
+	lu.assertNil(result, "Should return nil for nil desired version")
+end
+
+function TestUtils:testHandleEmptyDesiredVersion()
+	local Xcode = require("Xcode")
+	local xcodes = {
+		Xcode.new("/Applications/Xcode.app", "16.4.1"),
+	}
+
+	local result = utils.select_best_version(xcodes, "")
+	lu.assertNil(result, "Should return nil for empty desired version")
+end
+
 function TestUtils:testPreferHigherPatchVersions()
 	local Xcode = require("Xcode")
 	local xcodes = {
@@ -111,5 +136,25 @@ function TestUtils:testCheckOsValidation()
 	end
 end
 
--- Run tests
-os.exit(lu.LuaUnit.run())
+function TestUtils:testReadFileAndTrim()
+	local temp_path = os.tmpname()
+	local file = assert(io.open(temp_path, "w"))
+	file:write("  hello  ")
+	file:close()
+
+	local raw = utils.read_file(temp_path, false)
+	local trimmed = utils.read_file(temp_path, true)
+
+	lu.assertEquals(raw, "  hello  ")
+	lu.assertEquals(trimmed, "hello")
+
+	os.remove(temp_path)
+end
+
+function TestUtils:testReadFileErrorsOnEmptyPath()
+	local success, err = pcall(function()
+		utils.read_file("")
+	end)
+	lu.assertFalse(success)
+	lu.assertTrue(tostring(err):find("File path cannot be nil or empty") ~= nil)
+end

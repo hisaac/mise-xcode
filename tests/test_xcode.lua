@@ -56,6 +56,3 @@ function TestXcode:testWorkWithDifferentBasePaths()
 	local dev_dir = xcode:developer_dir()
 	lu.assertEquals(dev_dir, "/Users/test/Applications/Xcode_16.app/Contents/Developer")
 end
-
--- Run tests
-os.exit(lu.LuaUnit.run())

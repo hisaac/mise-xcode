@@ -35,6 +35,9 @@ run = "hk fix --all"
 [tasks.test]
 depends = ["test-unit", "test-integration"]
 
+[tasks.test-unit]
+run = "lua tests/run.lua"
+
 # Hidden tasks
 
 [tasks._bootstrap_hk]
