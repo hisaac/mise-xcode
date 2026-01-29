@@ -7,11 +7,33 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  MISE_ENV: ci
+
 jobs:
-  test:
+  test-unit:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
-      - run: mise run check
-      - run: mise run test
+        with:
+          install: false
+      - run: mise install
+      - run: mise run test-unit
+
+  test-integration:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on:
+          - macos-26
+          - ubuntu-latest
+          - windows-latest
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v3
+        with:
+          install: false
+      - run: mise install
+      - run: mise run test-integration

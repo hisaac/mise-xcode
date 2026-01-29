@@ -7,6 +7,7 @@ includes = ["scripts"]
 [tools]
 actionlint = "latest"
 hk = "latest"
+jq = "latest"
 lua = "5.4"
 pkl = "latest"
 shellcheck = "latest"
@@ -16,7 +17,7 @@ yamlfmt = "latest"
 
 [plugins]
 # Temporary fix for luarocks download and install issues
-lua = "https://github.com/hisaac/vfox-lua.git#hisaac/fix-luarocks-download-and-install"
+"vfox:lua" = "https://github.com/hisaac/vfox-lua.git#hisaac/fix-luarocks-download-and-install"
 
 [hooks]
 postinstall = "mise run bootstrap"
@@ -33,10 +34,13 @@ alias = ["fmt", "format"]
 run = "hk fix --all"
 
 [tasks.test]
-depends = ["test-unit", "test-integration"]
+run = [{ task = "test-unit" }, { task = "test-integration" }]
 
 [tasks.test-unit]
-run = "lua tests/run.lua"
+run = "lua tests/run_unit_tests.lua"
+
+[tasks.test-integration]
+run = "lua tests/run_integration_tests.lua"
 
 # Hidden tasks
 
@@ -46,4 +50,8 @@ run = "hk install --mise"
 
 [tasks._bootstrap_luarocks]
 hide = true
-run = ["luarocks install luacheck", "luarocks install luaunit"]
+run = [
+  "luarocks install luacheck",
+  "luarocks install luaunit",
+  "luarocks install dkjson",
+]
