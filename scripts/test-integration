@@ -14,7 +14,7 @@ function main() {
 	local -r temp_file=$(mktemp)
 
 	set +o errexit # Don't exit on error
-	mise plugin link --force xcode-version .
+	mise plugin link --force xcode .
 	mise env --env integration-tests 2>&1 | tee "${temp_file}"
 	set -o errexit
 

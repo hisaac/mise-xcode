@@ -5,7 +5,7 @@
 - `hooks/` contains mise plugin hooks (`mise_env.lua`, `mise_path.lua`).
 - `tests/` includes LuaUnit-based tests plus fixtures in `tests/test-data/`.
 - `scripts/` contains task entrypoints used by `mise` (unit and integration test runners).
-- Root config files: `mise.toml`, `stylua.toml`, `mise-xcode-dev-1.rockspec`, `hk.pkl`.
+- Root config files: `mise.toml`, `stylua.toml`, `hk.pkl`.
 
 ## Build, Test, and Development Commands
 - `mise run bootstrap` installs development tooling (hk, luarocks deps).

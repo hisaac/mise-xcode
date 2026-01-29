@@ -46,4 +46,4 @@ run = "hk install --mise"
 
 [tasks._bootstrap_luarocks]
 hide = true
-run = "luarocks install --only-deps mise-xcode-dev-1.rockspec"
+run = ["luarocks install luacheck", "luarocks install luaunit"]

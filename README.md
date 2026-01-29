@@ -1,258 +1,67 @@
 # mise-xcode
 
-### 2. Implement the hooks
+A mise env plugin that selects an installed Xcode and exports `DEVELOPER_DIR`.
+It does not download or install Xcode; it only points to what is already on disk.
 
-#### `hooks/available.lua`
+## Usage
 
-Returns a list of available versions. Examples:
+Add the plugin and configure it in your `mise.toml`:
 
-```lua
--- Example 1: GitHub releases API
-local repo_url = "https://api.github.com/repos/owner/repo/releases"
+```toml
+[plugins]
+xcode = "https://github.com/hisaac/mise-xcode.git"
 
--- Example 2: GitHub tags API
-local repo_url = "https://api.github.com/repos/owner/repo/tags"
-
--- Example 3: Custom version listing
--- Parse from a website, API, or other source
+[env._.xcode]
+version = "16.4"
 ```
 
-#### `hooks/pre_install.lua`
-
-Returns download information for a specific version:
-
-```lua
--- Example 1: Simple binary download
-local url = "https://github.com/owner/repo/releases/download/v" .. version .. "/tool-linux-amd64"
-
--- Example 2: Archive download
-local url = "https://github.com/owner/repo/releases/download/v" .. version .. "/tool-" .. version .. "-" .. platform .. ".tar.gz"
-
--- Example 3: Raw file from repository
-local url = "https://raw.githubusercontent.com/owner/repo/" .. version .. "/bin/tool"
-```
-
-#### `hooks/post_install.lua`
-
-Handles post-installation setup:
-
-```lua
--- Example 1: Single binary (chmod and move to bin/)
-os.execute("mkdir -p " .. path .. "/bin")
-os.execute("mv " .. path .. "/tool " .. path .. "/bin/tool")
-os.execute("chmod +x " .. path .. "/bin/tool")
-
--- Example 2: Extract from archive (handled automatically by mise)
--- Usually no action needed if pre_install returns an archive
-
--- Example 3: Multiple binaries
--- Move all executables to bin/ directory
-```
-
-### 3. Configure environment variables
-
-Update `hooks/env_keys.lua` if your tool needs special environment variables:
-
-```lua
--- Basic PATH setup (minimum required)
-return {
-	{
-		key = "PATH",
-		value = mainPath .. "/bin"
-	}
-}
-
--- Advanced example with tool-specific vars
-return {
-	{
-		key = "TOOL_HOME",
-		value = mainPath
-	},
-	{
-		key = "PATH",
-		value = mainPath .. "/bin"
-	},
-	{
-		key = "LD_LIBRARY_PATH",
-		value = mainPath .. "/lib"
-	}
-}
-```
-
-## Development Workflow
-
-### Setting up development environment
-
-1. Install pre-commit hooks (optional but recommended):
+Then load the environment:
 
 ```bash
-hk install
+mise env
 ```
 
-This sets up automatic linting and formatting on git commits.
+## Configuration
 
-### Local Testing
+The plugin supports these options under `[env._.xcode]`:
 
-#### Unit Tests
+- `version` (string, required unless `version_file` is set): desired Xcode version, can be partial like `16` or `16.4`.
+- `version_file` (string, optional): path to a file containing the desired version.
+- `additional_search_paths` (string or array, optional): extra directories to scan for `Xcode*.app`.
+- `debug` (bool, optional): print detected installations and selection details.
 
-This project includes comprehensive unit tests for all core modules (Version, Xcode, utils) using [LuaUnit](https://github.com/bluebird75/luaunit).
+Example with a version file and extra search paths:
 
-Run tests **without mise** (requires Lua 5.1+ and LuaUnit):
+```toml
+[env._.xcode]
+version_file = ".xcode-version"
+additional_search_paths = ["~/Applications", "/Volumes/SDKs"]
+debug = true
+```
+
+## Project Layout
+
+- `hooks/mise_env.lua`: selects the best matching installed Xcode and sets `DEVELOPER_DIR`.
+- `hooks/mise_path.lua`: no PATH changes.
+- `lib/`: core logic for version parsing, Xcode representation, and selection.
+- `tests/`: LuaUnit tests and a runner at `tests/run.lua`.
+
+## Development
+
+Bootstrap dev dependencies (LuaUnit + Luacheck):
 
 ```bash
-# Install LuaUnit if not already installed
-luarocks install luaunit
-
-# Run tests
-./run_tests.sh
+mise run bootstrap
 ```
 
-Or run tests **with mise**:
+Run unit tests:
 
 ```bash
-mise run test
+mise run test-unit
 ```
 
-The test suite includes:
-- `tests/test_version.lua` - Tests for Version parsing and comparison
-- `tests/test_xcode.lua` - Tests for Xcode object management
-- `tests/test_utils.lua` - Tests for utility functions
-
-#### Integration Testing
-
-1. Link your plugin for development:
+Run integration tests (macOS/Linux expectations):
 
 ```bash
-mise plugin link --force xcode .
+mise run test-integration
 ```
-
-2. Run linting:
-
-```bash
-mise run lint
-```
-
-3. Run full CI suite:
-
-```bash
-mise run ci
-```
-
-### Code Quality
-
-This template uses [hk](https://hk.jdx.dev) for modern linting and pre-commit hooks:
-
-- **Automatic formatting**: `stylua` formats Lua code
-- **Static analysis**: `luacheck` catches Lua issues
-- **GitHub Actions linting**: `actionlint` validates workflows
-- **Pre-commit hooks**: Runs all checks automatically on git commit
-
-Manual commands:
-
-```bash
-hk check      # Run all linters (same as mise run lint)
-hk fix        # Run linters and auto-fix issues
-```
-
-### Debugging
-
-Enable debug output:
-
-```bash
-MISE_DEBUG=1 mise install xcode@latest
-```
-
-## Files
-
-- `metadata.lua` – Plugin metadata and configuration
-- `hooks/available.lua` – Returns available versions from upstream
-- `hooks/pre_install.lua` – Returns artifact URL for a given version
-- `hooks/post_install.lua` – Post-installation setup (permissions, moving files)
-- `hooks/env_keys.lua` – Environment variables to export (PATH, etc.)
-- `.github/workflows/ci.yml` – GitHub Actions CI/CD pipeline
-- `mise.toml` – Development tools and configuration
-- `mise-tasks/` – Task scripts for testing
-- `hk.pkl` – Modern linting and pre-commit hook configuration
-- `.luacheckrc` – Lua linting configuration
-- `stylua.toml` – Lua formatting configuration
-
-## Common Patterns
-
-### Platform Detection
-
-```lua
-local function get_platform()
-	-- RUNTIME object is provided by mise/vfox
-	-- RUNTIME.osType: "Windows", "Linux", "Darwin"
-	-- RUNTIME.archType: "amd64", "386", "arm64", etc.
-
-	local os_name = RUNTIME.osType:lower()
-	local arch = RUNTIME.archType
-
-	-- Map to your tool's platform naming convention
-	local platform_map = {
-		["darwin"] = {
-			["amd64"] = "darwin-amd64",
-			["arm64"] = "darwin-arm64",
-		},
-		["linux"] = {
-			["amd64"] = "linux-amd64",
-			["arm64"] = "linux-arm64",
-		},
-		["windows"] = {
-			["amd64"] = "windows-amd64",
-			["386"] = "windows-386",
-		}
-	}
-
-	local os_map = platform_map[os_name]
-	if os_map then
-		return os_map[arch] or "linux-amd64"
-	end
-	return "linux-amd64"  -- fallback
-end
-```
-
-### Checksum Verification
-
-```lua
--- In pre_install.lua, return sha256
-return {
-	version = version,
-	url = url,
-	sha256 = "abc123...",  -- Optional but recommended
-}
-```
-
-### Error Handling
-
-```lua
-if err ~= nil then
-	error("Failed to fetch versions: " .. err)
-end
-
-if resp.status_code ~= 200 then
-	error("API returned status " .. resp.status_code)
-end
-```
-
-## Documentation
-
-Refer to the mise docs for detailed information:
-
-- [Tool plugin development](https://mise.jdx.dev/tool-plugin-development.html) - Complete guide to plugin development
-- [Lua modules reference](https://mise.jdx.dev/plugin-lua-modules.html) - Available Lua modules and functions
-- [Plugin publishing](https://mise.jdx.dev/plugin-publishing.html) - How to publish your plugin
-- [mise-plugins organization](https://github.com/mise-plugins) - Community plugins repository
-
-## Publishing
-
-1. Ensure all tests pass: `mise run ci`
-2. Create a GitHub repository for your plugin
-3. Push your code
-4. (Optional) Request to transfer to [mise-plugins](https://github.com/mise-plugins) organization
-5. Add to the [mise registry](https://github.com/jdx/mise/blob/main/registry.toml) via PR
-
-## License
-
-MIT
