@@ -1,18 +1,18 @@
 [settings]
-activate_aggressive = true
 experimental = true
 
-[env]
-MISE_USE_VERSIONS_HOST = "0"
+[task_config]
+includes = ["scripts"]
 
 [tools]
 actionlint = "latest"
 hk = "latest"
-lua = "5.4"
+lua = "5.5"
 pkl = "latest"
 shellcheck = "latest"
 shfmt = "latest"
 stylua = "latest"
+yamlfmt = "latest"
 
 [hooks]
 postinstall = "mise run bootstrap"
@@ -20,22 +20,16 @@ postinstall = "mise run bootstrap"
 [tasks.bootstrap]
 depends = ["_bootstrap_hk", "_bootstrap_luarocks"]
 
-[tasks.lint]
-alias = "check"
+[tasks.check]
+alias = ["chk", "lint"]
 run = "hk check --all"
 
-[tasks.format]
-alias = ["fix", "fmt"]
+[tasks.fix]
+alias = ["fmt", "format"]
 run = "hk fix --all"
 
 [tasks.test]
-depends = ["unit-test", "integration-test"]
-
-[tasks.unit-test]
-run = "scripts/unit-test.bash"
-
-[tasks.integration-test]
-run = "scripts/integration-test.bash"
+depends = ["test-unit", "test-integration"]
 
 # Hidden tasks
 

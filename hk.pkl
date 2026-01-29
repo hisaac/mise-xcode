@@ -10,9 +10,11 @@ local linters = new Mapping<String, Step> {
   ["actionlint"] = Builtins.actionlint
   ["luacheck"] = Builtins.luacheck
   ["mise"] = Builtins.mise
+	["pkl"] = Builtins.pkl
   ["shellcheck"] = Builtins.shellcheck
   ["shfmt"] = Builtins.shfmt
   ["stylua"] = Builtins.stylua
+	["yamlfmt"] = Builtins.yamlfmt
 }
 
 hooks {
