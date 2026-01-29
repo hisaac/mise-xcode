@@ -4,7 +4,7 @@
 - `lib/` holds the core Lua modules: `Version.lua`, `Xcode.lua`, and `utils.lua` (plugin logic and version handling).
 - `hooks/` contains mise plugin hooks (`mise_env.lua`, `mise_path.lua`).
 - `tests/` includes LuaUnit-based tests plus fixtures in `tests/test-data/`.
-- `scripts/` contains task entrypoints used by `mise` (unit and integration test runners).
+- `scripts/` currently unused (integration tests run via LuaUnit).
 - Root config files: `mise.toml`, `stylua.toml`, `hk.pkl`.
 
 ## Build, Test, and Development Commands
@@ -12,8 +12,7 @@
 - `mise run lint` or `hk check --all` runs linters and formatting checks.
 - `mise run format` or `hk fix --all` auto-fixes lint/format issues.
 - `mise run test` runs unit + integration tests.
-- `scripts/test-unit` runs all LuaUnit tests directly.
-- `scripts/test-integration` links the plugin and validates env behavior on macOS/Linux.
+- `mise run test-integration` runs LuaUnit-based integration checks.
 
 ## Coding Style & Naming Conventions
 - Lua formatting is enforced by `stylua` (`stylua.toml`): tabs, width 4, line width 120.

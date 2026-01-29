@@ -1,5 +1,5 @@
--- tests/run.lua
--- Test runner for all unit tests
+-- tests/run_unit_tests.lua
+-- Test runner for unit tests only
 
 -- Ensure local lib and tests are on the path
 package.path = package.path .. ";./lib/?.lua;./tests/?.lua"
