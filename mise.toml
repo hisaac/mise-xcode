@@ -1,38 +1,50 @@
 [settings]
-activate_aggressive = true
 experimental = true
-
-[env]
-MISE_USE_VERSIONS_HOST = "0"
 
 [tools]
 actionlint = "latest"
 hk = "latest"
-lua = "5.4"
+jq = "latest"
+"vfox:hisaac/vfox-lua" = "5.4"
 pkl = "latest"
+shellcheck = "latest"
+shfmt = "latest"
 stylua = "latest"
+yamlfmt = "latest"
+
+[hooks]
+postinstall = "mise run bootstrap"
 
 [tasks.bootstrap]
-run = ["hk install --mise", { task = "install_dependencies" }]
+depends = ["_bootstrap_hk", "_bootstrap_luarocks"]
 
-[tasks.install_dependencies]
+[tasks.check]
+alias = ["chk", "lint"]
+run = "hk check --all"
+
+[tasks.fix]
+alias = ["fmt", "format"]
+run = "hk fix --all"
+
+[tasks.test]
+run = [{ task = "test-unit" }, { task = "test-integration" }]
+
+[tasks.test-unit]
+run = "lua tests/run_unit_tests.lua --verbose"
+
+[tasks.test-integration]
+run = "lua tests/run_integration_tests.lua --verbose"
+
+# Hidden tasks
+
+[tasks._bootstrap_hk]
 hide = true
-quiet = true
-run = '''
-if ! luarocks show "luacheck" >/dev/null 2>&1; then
-	luarocks install luacheck
-fi
-echo "All dependencies installed"
-'''
+run = "hk install --mise"
 
-[tasks.format]
-description = "Format Lua scripts"
-run = "stylua metadata.lua hooks/"
-
-[tasks.lint]
-description = "Lint Lua scripts and GitHub Actions using hk"
-run = "hk check"
-
-[tasks.ci]
-description = "Run all CI checks"
-depends = ["lint", "test"]
+[tasks._bootstrap_luarocks]
+hide = true
+run = [
+  "luarocks install dkjson",
+  "luarocks install luacheck",
+  "luarocks install luaunit",
+]

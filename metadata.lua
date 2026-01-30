@@ -3,9 +3,9 @@
 -- Documentation: https://mise.jdx.dev/env-plugin-development.html#metadata-lua
 
 PLUGIN = { -- luacheck: ignore
-	name = "xcode-version",
+	name = "xcode",
 	version = "1.0.0",
-	description = "A mise env plugin for setting the Xcode version",
+	description = "A mise env plugin for selecting an installed Xcode version",
 	author = "Isaac Halvorson",
 	homepage = "https://github.com/hisaac/mise-xcode",
 }

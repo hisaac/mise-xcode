@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Run plugin tests"
-set -euo pipefail
-
-mise plugin link --force xcode-version .
-mise env
