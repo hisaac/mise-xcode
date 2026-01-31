@@ -18,7 +18,7 @@ jobs:
       - uses: jdx/mise-action@v3
         with:
           cache: false
-          cache-save: true
+          cache_save: true
       - run: mise run test-unit
       - run: mise run test-integration
 
@@ -29,5 +29,5 @@ jobs:
       - uses: jdx/mise-action@v3
         with:
           cache: false
-          cache-save: true
+          cache_save: true
       - run: mise run test-integration
