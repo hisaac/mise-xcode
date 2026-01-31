@@ -2,15 +2,15 @@
 experimental = true
 
 [tools]
-actionlint = "latest"
-hk = "latest"
-jq = "latest"
+actionlint = "1"
+hk = "1"
+jq = "1"
 lua = "5.4"
-pkl = "latest"
-shellcheck = "latest"
-shfmt = "latest"
-stylua = "latest"
-yamlfmt = "latest"
+pkl = "0"
+shellcheck = "0"
+shfmt = "3"
+stylua = "2"
+yamlfmt = "0"
 
 [hooks]
 postinstall = "mise run bootstrap"
