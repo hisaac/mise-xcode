@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
+        with:
+          cache: false
+          cache-save: true
       - run: mise run test-unit
       - run: mise run test-integration
 
@@ -24,4 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
+        with:
+          cache: false
+          cache-save: true
       - run: mise run test-integration
