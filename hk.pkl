@@ -1,33 +1,33 @@
-amends "package://github.com/jdx/hk/releases/download/v1.27.0/hk@1.27.0#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.27.0/hk@1.27.0#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.35.0/hk@1.35.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.35.0/hk@1.35.0#/Builtins.pkl"
 
 fail_fast = false
 env {
-  ["HK_MISE"] = "true"
+	["HK_MISE"] = "true"
 }
 
 local linters = new Mapping<String, Step> {
-  ["actionlint"] = Builtins.actionlint
-  ["luacheck"] = Builtins.luacheck
-  ["mise"] = Builtins.mise
+	["actionlint"] = Builtins.actionlint
+	["luacheck"] = Builtins.luacheck
+	["mise"] = Builtins.mise
 	["pkl"] = Builtins.pkl
-  ["shellcheck"] = Builtins.shellcheck
-  ["shfmt"] = Builtins.shfmt
-  ["stylua"] = Builtins.stylua
+	["shellcheck"] = Builtins.shellcheck
+	["shfmt"] = Builtins.shfmt
+	["stylua"] = Builtins.stylua
 	["yamlfmt"] = Builtins.yamlfmt
 }
 
 hooks {
-  ["pre-commit"] {
-    fix = true
-    stash = "git"
-    steps = linters
-  }
-  ["fix"] {
-    fix = true
-    steps = linters
-  }
-  ["check"] {
-    steps = linters
-  }
+	["pre-commit"] {
+		fix = true
+		stash = "git"
+		steps = linters
+	}
+	["fix"] {
+		fix = true
+		steps = linters
+	}
+	["check"] {
+		steps = linters
+	}
 }

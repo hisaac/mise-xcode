@@ -6,6 +6,7 @@
         "luaunit",
         "shellcheck",
         "shfmt",
-        "stylua"
+        "stylua",
+        "xcodes"
     ]
 }
