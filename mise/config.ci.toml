@@ -1,5 +1,0 @@
-[settings]
-activate_aggressive = true
-
-[hooks]
-postinstall = "mise run _bootstrap_luarocks"
