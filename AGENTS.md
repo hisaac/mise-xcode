@@ -21,7 +21,7 @@
 
 ## Testing Guidelines
 - Tests use LuaUnit; see `tests/README.md` for usage.
-- Keep OS-dependent behavior behind guards (`utils.check_os()`), and test macOS-only paths separately.
+- Keep OS-dependent behavior behind guards (`utils.is_macos()`), and test macOS-only paths separately.
 - Naming: `tests/test_<module>.lua` with `Test<Module>:test<Behavior>()` functions.
 
 ## Commit & Pull Request Guidelines

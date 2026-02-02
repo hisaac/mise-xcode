@@ -9,30 +9,7 @@ local XCODE_BUNDLE_ID = "com.apple.dt.Xcode"
 local PLIST_INFO_PATH = "/Contents/Info.plist"
 
 local function trim(s)
-	-- ^%s* matches leading whitespace
-	-- (.-) matches the content (lazy match)
-	-- %s*$ matches trailing whitespace
-	-- %1 returns the captured content
-	return (s:gsub("^%s*(.-)%s*$", "%1"))
-end
-
-local function get_os()
-	-- 1. check for Windows via directory separator
-	if package.config:sub(1, 1) == "\\" then
-		return "windows"
-	end
-
-	-- 2. if Unix-like, check specifically for macOS (Darwin) vs Linux
-	local handle = io.popen("uname -s")
-	if not handle then
-		return nil
-	end
-
-	local result = handle:read("*a")
-	handle:close()
-
-	-- trim whitespace and lowercase
-	return trim(result:lower())
+	return s:match("^%s*(.-)%s*$")
 end
 
 local function read_plist_key(key, plist_path)
@@ -80,6 +57,26 @@ local function find_xcode_versions_in(dir)
 	handle:close()
 
 	return results
+end
+
+function UTILS.os_name()
+	-- 1. check for Windows via directory separator
+	if package.config:sub(1, 1) == "\\" then
+		return "windows"
+	end
+
+	-- 2. if Unix-like, check specifically for macOS (Darwin) vs Linux
+	local handle = io.popen("uname -s")
+	if not handle then
+		return nil
+	end
+	local result = handle:read("*l")
+	handle:close()
+	return result:lower()
+end
+
+function UTILS.is_macos()
+	return UTILS.os_name() == "darwin"
 end
 
 --- Finds and returns a table of installed Xcode versions.
@@ -144,32 +141,6 @@ function UTILS.select_best_version(available_xcodes, desired_version)
 
 	-- 3. Return the last one (the highest version)
 	return matches[#matches]
-end
-
---- Prints the contents of a table for debugging purposes.
---- @param tbl table The table to dump.
---- @param indent string|nil Optional indentation prefix for nested tables.
-function UTILS.dump_table(tbl, indent)
-	indent = indent or ""
-	if type(tbl) == "table" then
-		for key, value in pairs(tbl) do
-			if type(value) == "table" then
-				print(indent .. "[" .. tostring(key) .. "] = {")
-				UTILS.dump_table(value, indent .. "  ")
-				print(indent .. "}")
-			else
-				print(indent .. "[" .. tostring(key) .. "] = " .. tostring(value))
-			end
-		end
-	else
-		print(indent .. tostring(tbl))
-	end
-end
-
-function UTILS.check_os()
-	if get_os() ~= "darwin" then
-		error("Xcode is only available for macOS")
-	end
 end
 
 --- Reads the contents of a file.
