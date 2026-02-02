@@ -17,7 +17,7 @@ function PLUGIN:MiseEnv(ctx)
 	-- Non-macOS systems should no-op successfully
 	if not utils.is_macos() then
 		local os_name = utils.os_name() or "unknown"
-		log.warn("Skipping. Xcode is only available on macOS")
+		log.warn("Skipping. Xcode is only available on macOS (current OS: " .. os_name .. ")")
 		log.debug("Current OS is: " .. os_name)
 		return {}
 	end
@@ -43,7 +43,7 @@ function PLUGIN:MiseEnv(ctx)
 	-- Select the best matching version
 	local best_version = utils.select_best_version(installed_xcodes, xcode_version)
 	if not best_version then
-		log.warn("No Xcode installation matching version '" .. xcode_version .. "' was found")
+		log.warn("No Xcode installation matching version", tostring(xcode_version), "was found")
 		return {}
 	end
 

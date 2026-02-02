@@ -6,7 +6,7 @@ lockfile = true
 actionlint = "1"
 hk = "1"
 jq = "1"
-lua = "5.1"
+lua = "5.4"
 pkl = "0"
 shellcheck = "0"
 shfmt = "3"
@@ -15,7 +15,7 @@ yamlfmt = "0"
 
 [hooks]
 postinstall = '''
-if [[ ${CI:-} == true ]]; then
+if [ ${CI:-} == true ]; then
   mise run bootstrap-ci
 else
   mise run bootstrap
