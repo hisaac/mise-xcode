@@ -17,7 +17,7 @@ function PLUGIN:MiseEnv(ctx)
 	-- Non-macOS systems should no-op successfully
 	if not utils.is_macos() then
 		local os_name = utils.os_name() or "unknown"
-		log.warn("Skipping. Xcode is only available on macOS (current OS: " .. os_name .. ")")
+		log.warn("Skipping: Xcode is only available on macOS (current OS: " .. os_name .. ")")
 		return {}
 	end
 
