@@ -3,14 +3,16 @@
 local log = require("log")
 local utils = require("utils")
 
+log.debug("mise is using " .. _VERSION)
+
 function PLUGIN:MiseEnv(ctx)
 	local additional_search_paths = ctx.options.additional_search_paths
 	local xcode_version = ctx.options.version
 	local xcode_version_file = ctx.options.version_file
 
-	log.debug("additional_search_paths:", tostring(additional_search_paths))
-	log.debug("xcode_version:", tostring(xcode_version))
-	log.debug("xcode_version_file:", tostring(xcode_version_file))
+	log.debug("additional_search_paths: " .. tostring(additional_search_paths))
+	log.debug("xcode_version: " .. tostring(xcode_version))
+	log.debug("xcode_version_file: " .. tostring(xcode_version_file))
 
 	-- Non-macOS systems should no-op successfully
 	if not utils.is_macos() then
