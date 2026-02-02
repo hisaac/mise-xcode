@@ -3,6 +3,8 @@
 local log = require("log")
 local utils = require("utils")
 
+log.debug("mise is using " .. _VERSION)
+
 function PLUGIN:MiseEnv(ctx)
 	local additional_search_paths = ctx.options.additional_search_paths
 	local xcode_version = ctx.options.version
@@ -15,7 +17,7 @@ function PLUGIN:MiseEnv(ctx)
 	-- Non-macOS systems should no-op successfully
 	if not utils.is_macos() then
 		local os_name = utils.os_name() or "unknown"
-		log.warn("skipping; Xcode is only available on macOS (current OS: %s)", os_name)
+		log.warn("Skipping: Xcode is only available on macOS (current OS: " .. os_name .. ")")
 		return {}
 	end
 
@@ -40,7 +42,7 @@ function PLUGIN:MiseEnv(ctx)
 	-- Select the best matching version
 	local best_version = utils.select_best_version(installed_xcodes, xcode_version)
 	if not best_version then
-		log.warn(string.format("No Xcode installation matching version '%s' was found", xcode_version))
+		log.warn("No Xcode installation matching version " .. tostring(xcode_version) .. " was found")
 		return {}
 	end
 
