@@ -8,14 +8,15 @@ function PLUGIN:MiseEnv(ctx)
 	local xcode_version = ctx.options.version
 	local xcode_version_file = ctx.options.version_file
 
-	log.debug("additional_search_paths: " .. tostring(additional_search_paths))
-	log.debug("xcode_version: " .. tostring(xcode_version))
-	log.debug("xcode_version_file: " .. tostring(xcode_version_file))
+	log.debug("additional_search_paths:", tostring(additional_search_paths))
+	log.debug("xcode_version:", tostring(xcode_version))
+	log.debug("xcode_version_file:", tostring(xcode_version_file))
 
 	-- Non-macOS systems should no-op successfully
 	if not utils.is_macos() then
 		local os_name = utils.os_name() or "unknown"
-		log.warn("skipping; Xcode is only available on macOS (current OS: %s)", os_name)
+		log.warn("Skipping. Xcode is only available on macOS")
+		log.debug("Current OS is: " .. os_name)
 		return {}
 	end
 
@@ -40,7 +41,7 @@ function PLUGIN:MiseEnv(ctx)
 	-- Select the best matching version
 	local best_version = utils.select_best_version(installed_xcodes, xcode_version)
 	if not best_version then
-		log.warn(string.format("No Xcode installation matching version '%s' was found", xcode_version))
+		log.warn("No Xcode installation matching version '" .. xcode_version .. "' was found")
 		return {}
 	end
 
