@@ -15,7 +15,7 @@ yamlfmt = "0"
 
 [hooks]
 postinstall = '''
-if [ ${CI:-} == true ]; then
+if [ "$CI" = "true" ]; then
   mise run bootstrap-ci
 else
   mise run bootstrap

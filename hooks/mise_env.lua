@@ -18,7 +18,6 @@ function PLUGIN:MiseEnv(ctx)
 	if not utils.is_macos() then
 		local os_name = utils.os_name() or "unknown"
 		log.warn("Skipping. Xcode is only available on macOS (current OS: " .. os_name .. ")")
-		log.debug("Current OS is: " .. os_name)
 		return {}
 	end
 
