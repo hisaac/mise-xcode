@@ -43,7 +43,7 @@ function PLUGIN:MiseEnv(ctx)
 	-- Select the best matching version
 	local best_version = utils.select_best_version(installed_xcodes, xcode_version)
 	if not best_version then
-		log.warn("No Xcode installation matching version", tostring(xcode_version), "was found")
+		log.warn("No Xcode installation matching version " .. tostring(xcode_version) .. " was found")
 		return {}
 	end
 
