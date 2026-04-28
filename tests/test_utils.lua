@@ -108,18 +108,21 @@ function TestUtils:testResolvePathExpandsTildeOnly()
 	lu.assertEquals(result, home, "~ alone should expand to $HOME")
 end
 
-function TestUtils:testResolvePathRelative()
+function TestUtils:testResolvePathRelativeWithConfigRoot()
+	local result = utils.resolve_path("relative/file", "/my/project")
+	lu.assertEquals(result, "/my/project/relative/file", "Relative paths should resolve against config_root")
+end
+
+function TestUtils:testResolvePathRelativeFallsToPwd()
 	local pwd = os.getenv("PWD")
 	lu.assertNotNil(pwd, "PWD must be set for this test")
 	local result = utils.resolve_path("relative/file")
-	lu.assertEquals(result, pwd .. "/relative/file", "Relative paths should be resolved against $PWD")
+	lu.assertEquals(result, pwd .. "/relative/file", "Relative paths should fall back to $PWD when no config_root")
 end
 
 function TestUtils:testResolvePathRelativeDotSlash()
-	local pwd = os.getenv("PWD")
-	lu.assertNotNil(pwd, "PWD must be set for this test")
-	local result = utils.resolve_path("./file")
-	lu.assertEquals(result, pwd .. "/./file", "Paths starting with ./ should be resolved against $PWD")
+	local result = utils.resolve_path("./file", "/my/project")
+	lu.assertEquals(result, "/my/project/./file", "Paths starting with ./ should resolve against config_root")
 end
 
 function TestUtils:testResolvePathErrorOnEmpty()

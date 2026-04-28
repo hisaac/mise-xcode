@@ -145,11 +145,12 @@ end
 
 --- Resolves a file path to an absolute path.
 --- Expands a leading `~` to $HOME, and resolves relative paths against the
---- working directory of the mise process (determined via cmd.exec("pwd")).
+--- provided config_root. If no config_root is given, falls back to $PWD.
 --- Absolute paths are returned unchanged.
 --- @param path string The path to resolve.
+--- @param config_root string|nil The config root directory to resolve relative paths against.
 --- @return string The resolved absolute path.
-function UTILS.resolve_path(path)
+function UTILS.resolve_path(path, config_root)
 	if not path or path == "" then
 		error("File path cannot be nil or empty")
 	end
@@ -168,20 +169,12 @@ function UTILS.resolve_path(path)
 		return path
 	end
 
-	-- Relative path: resolve against mise's actual working directory.
-	-- Use mise's built-in cmd module when available (provides the real cwd of
-	-- the mise process), falling back to $PWD for standalone/test usage.
-	local cwd
-	local ok, cmd = pcall(require, "cmd")
-	if ok and cmd and cmd.exec then
-		cwd = cmd.exec("pwd"):match("^%s*(.-)%s*$")
-	else
-		cwd = os.getenv("PWD")
+	-- Relative path: resolve against config_root if provided, otherwise $PWD
+	local base = config_root or os.getenv("PWD")
+	if not base or base == "" then
+		error("Cannot resolve relative path '" .. path .. "': no config_root provided and $PWD is not set")
 	end
-	if not cwd or cwd == "" then
-		error("Cannot resolve relative path '" .. path .. "': failed to determine working directory")
-	end
-	return cwd .. "/" .. path
+	return base .. "/" .. path
 end
 
 --- Reads the contents of a file.

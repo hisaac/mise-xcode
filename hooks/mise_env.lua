@@ -9,10 +9,12 @@ function PLUGIN:MiseEnv(ctx)
 	local additional_search_paths = ctx.options.additional_search_paths
 	local xcode_version = ctx.options.version
 	local xcode_version_file = ctx.options.version_file
+	local config_root = ctx.options.config_root or os.getenv("MISE_XCODE_CONFIG_ROOT")
 
 	log.debug("additional_search_paths: " .. tostring(additional_search_paths))
 	log.debug("xcode_version: " .. tostring(xcode_version))
 	log.debug("xcode_version_file: " .. tostring(xcode_version_file))
+	log.debug("config_root: " .. tostring(config_root))
 
 	-- Non-macOS systems should no-op successfully
 	if not utils.is_macos() then
@@ -24,9 +26,14 @@ function PLUGIN:MiseEnv(ctx)
 	-- If xcode_version is not specified, try reading from version_file
 	if not xcode_version then
 		if xcode_version_file then
-			xcode_version_file = utils.resolve_path(xcode_version_file)
+			xcode_version_file = utils.resolve_path(xcode_version_file, config_root)
 			log.debug("xcode_version_file (resolved): " .. xcode_version_file)
-			xcode_version = utils.read_file(xcode_version_file, true)
+			local ok, result = pcall(utils.read_file, xcode_version_file, true)
+			if not ok then
+				log.warn("Could not read version_file '" .. xcode_version_file .. "': " .. tostring(result))
+				return {}
+			end
+			xcode_version = result
 		else
 			log.warn("Either 'version' or 'version_file' must be specified in mise configuration")
 			return {}
