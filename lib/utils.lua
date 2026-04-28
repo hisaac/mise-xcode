@@ -143,6 +143,47 @@ function UTILS.select_best_version(available_xcodes, desired_version)
 	return matches[#matches]
 end
 
+--- Resolves a file path to an absolute path.
+--- Expands a leading `~` to $HOME, and resolves relative paths against the
+--- working directory of the mise process (determined via cmd.exec("pwd")).
+--- Absolute paths are returned unchanged.
+--- @param path string The path to resolve.
+--- @return string The resolved absolute path.
+function UTILS.resolve_path(path)
+	if not path or path == "" then
+		error("File path cannot be nil or empty")
+	end
+
+	-- Expand leading ~ to $HOME
+	if path:sub(1, 1) == "~" then
+		local home = os.getenv("HOME")
+		if not home or home == "" then
+			error("Cannot expand '~': $HOME is not set")
+		end
+		return home .. path:sub(2)
+	end
+
+	-- Absolute paths pass through unchanged
+	if path:sub(1, 1) == "/" then
+		return path
+	end
+
+	-- Relative path: resolve against mise's actual working directory.
+	-- Use mise's built-in cmd module when available (provides the real cwd of
+	-- the mise process), falling back to $PWD for standalone/test usage.
+	local cwd
+	local ok, cmd = pcall(require, "cmd")
+	if ok and cmd and cmd.exec then
+		cwd = cmd.exec("pwd"):match("^%s*(.-)%s*$")
+	else
+		cwd = os.getenv("PWD")
+	end
+	if not cwd or cwd == "" then
+		error("Cannot resolve relative path '" .. path .. "': failed to determine working directory")
+	end
+	return cwd .. "/" .. path
+end
+
 --- Reads the contents of a file.
 --- @param path string The path to the file to read.
 --- @param trimmed boolean|nil Whether to trim whitespace from the content.

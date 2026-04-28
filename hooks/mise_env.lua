@@ -24,6 +24,8 @@ function PLUGIN:MiseEnv(ctx)
 	-- If xcode_version is not specified, try reading from version_file
 	if not xcode_version then
 		if xcode_version_file then
+			xcode_version_file = utils.resolve_path(xcode_version_file)
+			log.debug("xcode_version_file (resolved): " .. xcode_version_file)
 			xcode_version = utils.read_file(xcode_version_file, true)
 		else
 			log.warn("Either 'version' or 'version_file' must be specified in mise configuration")

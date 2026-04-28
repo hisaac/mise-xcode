@@ -1,0 +1,2 @@
+[env._.xcode]
+version_file = "tests/test-data/.xcode-version"

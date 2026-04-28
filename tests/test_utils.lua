@@ -86,3 +86,46 @@ function TestUtils:testPreferHigherPatchVersions()
 	local result = assert(utils.select_best_version(xcodes, "16.4"), "Expected patch match")
 	lu.assertEquals(tostring(result.version), "16.4.5")
 end
+
+-- Tests for resolve_path
+
+function TestUtils:testResolvePathAbsolute()
+	local result = utils.resolve_path("/absolute/path/to/file")
+	lu.assertEquals(result, "/absolute/path/to/file", "Absolute paths should pass through unchanged")
+end
+
+function TestUtils:testResolvePathExpandsTilde()
+	local home = os.getenv("HOME")
+	lu.assertNotNil(home, "HOME must be set for this test")
+	local result = utils.resolve_path("~/some/file")
+	lu.assertEquals(result, home .. "/some/file", "~ should be expanded to $HOME")
+end
+
+function TestUtils:testResolvePathExpandsTildeOnly()
+	local home = os.getenv("HOME")
+	lu.assertNotNil(home, "HOME must be set for this test")
+	local result = utils.resolve_path("~")
+	lu.assertEquals(result, home, "~ alone should expand to $HOME")
+end
+
+function TestUtils:testResolvePathRelative()
+	local pwd = os.getenv("PWD")
+	lu.assertNotNil(pwd, "PWD must be set for this test")
+	local result = utils.resolve_path("relative/file")
+	lu.assertEquals(result, pwd .. "/relative/file", "Relative paths should be resolved against $PWD")
+end
+
+function TestUtils:testResolvePathRelativeDotSlash()
+	local pwd = os.getenv("PWD")
+	lu.assertNotNil(pwd, "PWD must be set for this test")
+	local result = utils.resolve_path("./file")
+	lu.assertEquals(result, pwd .. "/./file", "Paths starting with ./ should be resolved against $PWD")
+end
+
+function TestUtils:testResolvePathErrorOnEmpty()
+	lu.assertErrorMsgContains("nil or empty", utils.resolve_path, "")
+end
+
+function TestUtils:testResolvePathErrorOnNil()
+	lu.assertErrorMsgContains("nil or empty", utils.resolve_path, nil)
+end
