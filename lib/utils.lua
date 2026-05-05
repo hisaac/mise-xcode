@@ -8,7 +8,23 @@ local Version = require("Version")
 local XCODE_BUNDLE_ID = "com.apple.dt.Xcode"
 local PLIST_INFO_PATH = "/Contents/Info.plist"
 
+-- Built-in mise modules (available in plugin hooks context)
+-- These are loaded lazily to allow unit tests to run without them
+local function get_file_module()
+	local ok, mod = pcall(require, "file")
+	return ok and mod or nil
+end
+
+local function get_strings_module()
+	local ok, mod = pcall(require, "strings")
+	return ok and mod or nil
+end
+
 local function trim(s)
+	local strings = get_strings_module()
+	if strings then
+		return strings.trim_space(s)
+	end
 	return s:match("^%s*(.-)%s*$")
 end
 
@@ -144,9 +160,10 @@ function UTILS.select_best_version(available_xcodes, desired_version)
 end
 
 --- Resolves a file path to an absolute path.
---- Expands a leading `~` to $HOME, and resolves relative paths against the
---- provided config_root. If no config_root is given, falls back to $PWD.
---- Absolute paths are returned unchanged.
+--- Absolute paths (those that begin with `/`) are returned unchanged.
+--- Paths with a leading `~` are expanded to `$HOME`.
+--- Relative paths are resolved against the provided `config_root`, or `$PWD` if no `config_root` is given.
+--- Uses the built-in `file.join_path()` when available (in mise plugin context).
 --- @param path string The path to resolve.
 --- @param config_root string|nil The config root directory to resolve relative paths against.
 --- @return string The resolved absolute path.
@@ -155,18 +172,22 @@ function UTILS.resolve_path(path, config_root)
 		error("File path cannot be nil or empty")
 	end
 
+	-- Absolute paths pass through unchanged
+	if path:sub(1, 1) == "/" then
+		return path
+	end
+
 	-- Expand leading ~ to $HOME
 	if path:sub(1, 1) == "~" then
 		local home = os.getenv("HOME")
 		if not home or home == "" then
 			error("Cannot expand '~': $HOME is not set")
 		end
+		local file_mod = get_file_module()
+		if file_mod and path:sub(2) ~= "" then
+			return file_mod.join_path(home, path:sub(3)) -- skip ~/
+		end
 		return home .. path:sub(2)
-	end
-
-	-- Absolute paths pass through unchanged
-	if path:sub(1, 1) == "/" then
-		return path
 	end
 
 	-- Relative path: resolve against config_root if provided, otherwise $PWD
@@ -174,10 +195,37 @@ function UTILS.resolve_path(path, config_root)
 	if not base or base == "" then
 		error("Cannot resolve relative path '" .. path .. "': no config_root provided and $PWD is not set")
 	end
+	local file_mod = get_file_module()
+	if file_mod then
+		return file_mod.join_path(base, path)
+	end
 	return base .. "/" .. path
 end
 
+--- Checks whether a file exists at the given path.
+--- Uses the built-in `file.exists()` when available (in mise plugin context),
+--- falls back to attempting to open the file.
+--- @param path string The path to check.
+--- @return boolean
+function UTILS.file_exists(path)
+	if not path or path == "" then
+		return false
+	end
+	local file_mod = get_file_module()
+	if file_mod then
+		return file_mod.exists(path)
+	end
+	local f = io.open(path, "r")
+	if f then
+		f:close()
+		return true
+	end
+	return false
+end
+
 --- Reads the contents of a file.
+--- Uses the built-in `file.read()` when available (in mise plugin context),
+--- falls back to io.open.
 --- @param path string The path to the file to read.
 --- @param trimmed boolean|nil Whether to trim whitespace from the content.
 --- @return string The file contents.
@@ -186,13 +234,21 @@ function UTILS.read_file(path, trimmed)
 		error("File path cannot be nil or empty")
 	end
 
-	local file, err = io.open(path, "r")
-	if not file then
-		error("Could not open file '" .. path .. "': " .. tostring(err or "unknown error"))
+	local contents
+	local file_mod = get_file_module()
+	if file_mod then
+		if not file_mod.exists(path) then
+			error("Could not open file '" .. path .. "': No such file or directory")
+		end
+		contents = file_mod.read(path)
+	else
+		local f, err = io.open(path, "r")
+		if not f then
+			error("Could not open file '" .. path .. "': " .. tostring(err or "unknown error"))
+		end
+		contents = f:read("*a")
+		f:close()
 	end
-
-	local contents = file:read("*a")
-	file:close()
 
 	if trimmed then
 		contents = trim(contents)
