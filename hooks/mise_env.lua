@@ -9,7 +9,7 @@ function PLUGIN:MiseEnv(ctx)
 	local additional_search_paths = ctx.options.additional_search_paths
 	local xcode_version = ctx.options.version
 	local xcode_version_file = ctx.options.version_file
-	local config_root = ctx.options.config_root or os.getenv("MISE_XCODE_CONFIG_ROOT")
+	local config_root = ctx.config_root
 
 	log.debug("additional_search_paths: " .. tostring(additional_search_paths))
 	log.debug("xcode_version: " .. tostring(xcode_version))
