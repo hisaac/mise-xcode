@@ -48,7 +48,21 @@ run = [{ task = "test-unit" }, { task = "test-integration" }]
 run = "lua tests/run_unit_tests.lua --verbose"
 
 [tasks.test-integration]
-run = "lua tests/run_integration_tests.lua --verbose"
+run = "bash tests/integration_tests.sh"
+
+# Tool tasks
+
+[tasks.upd]
+description = "Upgrades outdated tools based on the range specified in mise.toml"
+run = ["mise upgrade", "mise lock"]
+
+[tasks.upg]
+description = "Upgrades outdated tools to their latest versions, ignoring the range specified in mise.toml"
+run = ["mise upgrade --bump", "mise lock"]
+
+[tasks.outd]
+run = "mise outdated --local --bump"
+
 
 # Hidden tasks
 
@@ -58,8 +72,4 @@ run = ["hk install --mise", { task = "update-hk-import" }]
 
 [tasks._bootstrap_luarocks]
 hide = true
-run = [
-  "luarocks install dkjson",
-  "luarocks install luacheck",
-  "luarocks install luaunit",
-]
+run = ["luarocks install luacheck", "luarocks install luaunit"]

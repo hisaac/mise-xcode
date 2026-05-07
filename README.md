@@ -15,6 +15,15 @@ xcode = "https://github.com/hisaac/mise-xcode.git"
 version = "16.4"
 ```
 
+To pin to a specific release, branch, or commit:
+
+```toml
+[plugins]
+xcode = "https://github.com/hisaac/mise-xcode.git#v1.0.0"
+```
+
+The `#` fragment supports tags (`#v1.0.0`), branches (`#main`), and commit SHAs.
+
 Then load the environment:
 
 ```bash

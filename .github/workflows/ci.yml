@@ -7,8 +7,9 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  MISE_ENV: ci
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test-macos:

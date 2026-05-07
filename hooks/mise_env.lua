@@ -1,6 +1,8 @@
 -- hooks/mise_env.lua
 
 local log = require("log")
+local file = require("file")
+local strings = require("strings")
 local utils = require("utils")
 
 log.debug("mise is using " .. _VERSION)
@@ -9,10 +11,12 @@ function PLUGIN:MiseEnv(ctx)
 	local additional_search_paths = ctx.options.additional_search_paths
 	local xcode_version = ctx.options.version
 	local xcode_version_file = ctx.options.version_file
+	local config_root = ctx.config_root
 
 	log.debug("additional_search_paths: " .. tostring(additional_search_paths))
 	log.debug("xcode_version: " .. tostring(xcode_version))
 	log.debug("xcode_version_file: " .. tostring(xcode_version_file))
+	log.debug("config_root: " .. tostring(config_root))
 
 	-- Non-macOS systems should no-op successfully
 	if not utils.is_macos() then
@@ -22,9 +26,16 @@ function PLUGIN:MiseEnv(ctx)
 	end
 
 	-- If xcode_version is not specified, try reading from version_file
+	local resolved_version_file
 	if not xcode_version then
 		if xcode_version_file then
-			xcode_version = utils.read_file(xcode_version_file, true)
+			resolved_version_file = utils.resolve_path(xcode_version_file, config_root)
+			log.debug("xcode_version_file (resolved): " .. resolved_version_file)
+			if not file.exists(resolved_version_file) then
+				log.warn("version_file not found: " .. resolved_version_file)
+				return {}
+			end
+			xcode_version = strings.trim_space(file.read(resolved_version_file))
 		else
 			log.warn("Either 'version' or 'version_file' must be specified in mise configuration")
 			return {}
@@ -46,11 +57,21 @@ function PLUGIN:MiseEnv(ctx)
 		return {}
 	end
 
-	-- Set DEVELOPER_DIR environment variable
-	return {
+	-- Return with caching support: cache result and watch the version_file for changes
+	local env = {
 		{
 			key = "DEVELOPER_DIR",
 			value = best_version:developer_dir(),
 		},
 	}
+
+	if resolved_version_file then
+		return {
+			cacheable = true,
+			watch_files = { resolved_version_file },
+			env = env,
+		}
+	end
+
+	return env
 end
