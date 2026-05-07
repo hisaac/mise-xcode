@@ -161,7 +161,7 @@ end
 
 --- Resolves a file path to an absolute path.
 --- Absolute paths (those that begin with `/`) are returned unchanged.
---- Paths with a leading `~` are expanded to `$HOME`.
+--- Paths with `~` or `~/...` are expanded to `$HOME`.
 --- Relative paths are resolved against the provided `config_root`, or `$PWD` if no `config_root` is given.
 --- Uses the built-in `file.join_path()` when available (in mise plugin context).
 --- @param path string The path to resolve.
@@ -183,11 +183,24 @@ function UTILS.resolve_path(path, config_root)
 		if not home or home == "" then
 			error("Cannot expand '~': $HOME is not set")
 		end
-		local file_mod = get_file_module()
-		if file_mod and path:sub(2) ~= "" then
-			return file_mod.join_path(home, path:sub(3)) -- skip ~/
+
+		if path == "~" then
+			return home
 		end
-		return home .. path:sub(2)
+
+		if path:sub(1, 2) == "~/" then
+			local remainder = path:sub(3)
+			if remainder == "" then
+				return home
+			end
+			local file_mod = get_file_module()
+			if file_mod then
+				return file_mod.join_path(home, remainder)
+			end
+			return home .. "/" .. remainder
+		end
+
+		error("Unsupported home expansion in path '" .. path .. "': only '~' and '~/...' are supported")
 	end
 
 	-- Relative path: resolve against config_root if provided, otherwise $PWD

@@ -108,6 +108,10 @@ function TestUtils:testResolvePathExpandsTildeOnly()
 	lu.assertEquals(result, home, "~ alone should expand to $HOME")
 end
 
+function TestUtils:testResolvePathErrorOnTildeUsername()
+	lu.assertErrorMsgContains("Unsupported home expansion", utils.resolve_path, "~user/file")
+end
+
 function TestUtils:testResolvePathRelativeWithConfigRoot()
 	local result = utils.resolve_path("relative/file", "/my/project")
 	lu.assertEquals(result, "/my/project/relative/file", "Relative paths should resolve against config_root")
